@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -11,6 +12,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using ServerSightAPI.Configurations;
+using ServerSightAPI.Configurations.Services;
+using ServerSightAPI.Repository;
+using ServerSightAPI.Services;
 
 namespace ServerSightAPI
 {
@@ -26,11 +31,32 @@ namespace ServerSightAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.ConfigurePostgreDatabase(Configuration);
+
+            services.AddAuthentication();
+            services.AddAuthorization();
+            services.ConfigureIdentity();
+            
             services.AddControllers();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo {Title = "ServerSightAPI", Version = "v1"});
-            });
+            
+            services.ConfigureCORSHeaders();
+            services.AddHttpContextAccessor();
+            
+            services.ConfigureJwt(Configuration);
+            
+            // provides an instances when the application aks one to inject
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IAuthManager, AuthManager>();
+            
+            services.AddAutoMapper(typeof(MapperInitializer));
+            
+            services.ConfigureSwagger();
+            
+            services.AddMemoryCache();
+            
+            services.AddControllers().AddNewtonsoftJson(op => 
+                op.SerializerSettings.ReferenceLoopHandling = 
+                    Newtonsoft.Json.ReferenceLoopHandling.Ignore);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -39,17 +65,30 @@ namespace ServerSightAPI
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ServerSightAPI v1"));
             }
 
+            app.UseSwagger();
+            app.UseSwaggerUi();
+            
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
+            app.UseResponseCaching();
+            
+            // for nginx reverse proxy header passing.
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
+            
+            app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
         }
     }
 }
