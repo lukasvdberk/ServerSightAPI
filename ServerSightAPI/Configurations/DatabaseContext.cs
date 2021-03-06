@@ -12,8 +12,7 @@ namespace ServerSightAPI.Configurations
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // for serial ids
-            // modelBuilder.UseSerialColumns();
+            base.OnModelCreating(modelBuilder);
         }
     }
 }
