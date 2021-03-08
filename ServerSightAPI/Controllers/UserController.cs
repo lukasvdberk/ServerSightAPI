@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
@@ -6,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ServerSightAPI.DTO.User;
 using ServerSightAPI.Models;
+using ServerSightAPI.Responses;
 using ServerSightAPI.Services;
 
 namespace ServerSightAPI.Controllers
@@ -40,17 +43,17 @@ namespace ServerSightAPI.Controllers
         {
             _logger.LogInformation($@"Registration attempt for { userDto.Email }");
 
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var user = _mapper.Map<User>(userDto);
             
             // email must be unique
             if (await _userManager.FindByEmailAsync(user.Email) != null)
             {
-                return BadRequest("User with given email already exists");
+                // TODO do this in seperate function.
+                return BadRequest(new FieldErrors(
+                    new List<FieldError>
+                    {
+                        new ("Email", "User with given email already exists")
+                    }));
             }
             
             // required by entity framework. 
@@ -59,7 +62,13 @@ namespace ServerSightAPI.Controllers
             
             if (!result.Succeeded)
             {
-                return BadRequest(result.Errors);
+                // TODO do this in seperate function.
+                List<FieldError> fieldErrs = new List<FieldError>();
+                foreach (var error in result.Errors)
+                {
+                    fieldErrs.Add(new FieldError(error.Code, error.Description));
+                }
+                return BadRequest(new FieldErrors(fieldErrs));
             }
 
             return Ok();
@@ -73,20 +82,23 @@ namespace ServerSightAPI.Controllers
         {
             _logger.LogInformation($@"Login attempt for {userDto.Email}");
         
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-        
             var user = await _userManager.FindByNameAsync(userDto.Email);
             if (user == null)
             {
-                return Unauthorized("Email does not exist");
+                return BadRequest(new FieldErrors(
+                    new List<FieldError>
+                    {
+                        new ("Email", "Email does not exist")
+                    }));
             }
 
             if (!await _userManager.CheckPasswordAsync(user, userDto.Password))
             {
-                return Unauthorized("Invalid password");
+                return BadRequest(new FieldErrors(
+                    new List<FieldError>
+                    {
+                        new ("Password", "Invalid password")
+                    }));
             }
 
             return Accepted(new

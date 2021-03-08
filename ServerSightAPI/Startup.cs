@@ -1,17 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
 using ServerSightAPI.Configurations;
 using ServerSightAPI.Configurations.Services;
 using ServerSightAPI.Repository;
@@ -39,7 +31,7 @@ namespace ServerSightAPI
             
             services.AddControllers();
             
-            services.ConfigureCORSHeaders();
+            services.ConfigureCorsHeaders();
             services.AddHttpContextAccessor();
             
             services.ConfigureJwt(Configuration);
@@ -53,6 +45,7 @@ namespace ServerSightAPI
             services.ConfigureSwagger();
             
             services.AddMemoryCache();
+            services.ConfigureModelStateHandler();
             
             services.AddControllers().AddNewtonsoftJson(op => 
                 op.SerializerSettings.ReferenceLoopHandling = 
@@ -66,6 +59,8 @@ namespace ServerSightAPI
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCors("CorsPolicy");
 
             app.UseSwagger();
             app.UseSwaggerUi();

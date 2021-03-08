@@ -4,7 +4,7 @@ namespace ServerSightAPI.Configurations.Services
 {
     public static class Cors
     {
-        public static void ConfigureCORSHeaders(this IServiceCollection services)
+        public static void ConfigureCorsHeaders(this IServiceCollection services)
         {
             services.AddCors(c =>
             {
