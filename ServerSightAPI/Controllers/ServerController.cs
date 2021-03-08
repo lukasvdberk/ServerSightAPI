@@ -56,16 +56,13 @@ namespace ServerSightAPI.Controllers
             // only fetch servers from the user who requested it
             var servers = await _unitOfWork.Servers.GetAll(expression: q => q.OwnedById == user.Id);
 
-            if (!searchServerDto.Title.Equals(""))
+            if (!string.IsNullOrWhiteSpace(searchServerDto.Title))
             {
                 servers = servers.Where(s => s.Title.Contains(searchServerDto.Title)).ToList();
-                servers = servers.Where(s => s.PowerStatus == searchServerDto.PowerStatus).ToList();
             }
 
-            if (searchServerDto.PowerStatus)
-            {
-            }
-            
+            servers = servers.Where(s => s.PowerStatus == searchServerDto.PowerStatus).ToList();
+
             var serversMapped = _mapper.Map<IList<ServerDto>>(servers);
 
             return serversMapped;
