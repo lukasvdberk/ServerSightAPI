@@ -22,7 +22,7 @@ namespace ServerSightAPI.Repository
         public async Task<IList<T>> GetAll(Expression<Func<T, bool>> expression = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, List<string> includes = null)
         {
             IQueryable<T> query = _db;
-            if (includes == null) return await query.AsNoTracking().ToListAsync();
+
             if (expression != null)
             {
                 query = query.Where(expression);
@@ -32,26 +32,31 @@ namespace ServerSightAPI.Repository
             {
                 query = orderBy(query);
             }
-            foreach (var includeProperty in includes)
-            {
-                query = query.Include(includeProperty);
-            }
 
+            if (includes != null)
+            {
+                foreach (var includeProperty in includes)
+                {
+                    query = query.Include(includeProperty);
+                }   
+            }
             return await query.AsNoTracking().ToListAsync();
         }
 
         public async Task<T> Get(Expression<Func<T, bool>> expression, List<string> includes = null)
         {
             IQueryable<T> query = _db;
-            if (includes == null) return await query.AsNoTracking().FirstOrDefaultAsync(expression);
             if (expression != null)
             {
                 query = query.Where(expression);
             }
-            
-            foreach (var includeProperty in includes)
+
+            if (includes != null)
             {
-                query = query.Include(includeProperty);
+                foreach (var includeProperty in includes)
+                {
+                    query = query.Include(includeProperty);
+                }   
             }
 
             return await query.AsNoTracking().FirstOrDefaultAsync();
@@ -83,8 +88,7 @@ namespace ServerSightAPI.Repository
 
         public void Update(T entity)
         {
-            _db.Attach(entity);
-            _context.Entry(entity).State = EntityState.Modified;
+            _context.Update(entity);
             _context.SaveChanges();
         }
     }

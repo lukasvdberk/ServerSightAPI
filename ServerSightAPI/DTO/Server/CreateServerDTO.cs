@@ -9,5 +9,7 @@ namespace ServerSightAPI.DTO.Server
         public string Name { get; set; }
         [Required]
         public string Description { get; set; }
+
+        public bool PowerStatus { get; set; } = true;
     }
 }
