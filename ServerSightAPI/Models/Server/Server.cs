@@ -10,7 +10,7 @@ namespace ServerSightAPI.Models.Server
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string Id { get; set; }
         // TODO refactor to name
-        public string Title { get; set; }
+        public string Name { get; set; }
         
         [ForeignKey(nameof(User))]
         public string OwnedById { get; set; }

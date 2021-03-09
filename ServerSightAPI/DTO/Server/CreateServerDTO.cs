@@ -6,7 +6,7 @@ namespace ServerSightAPI.DTO.Server
     {
         [Required]
         [StringLength(maximumLength: 20, MinimumLength = 3)]
-        public string Title { get; set; }
+        public string Name { get; set; }
         [Required]
         public string Description { get; set; }
     }

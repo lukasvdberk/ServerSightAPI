@@ -4,7 +4,7 @@ namespace ServerSightAPI.DTO.Server
 {
     public class SearchServerDto
     {
-        public string Title { get; set; }
+        public string Name { get; set; }
         public bool PowerStatus { get; set; } = true;
     }
 }

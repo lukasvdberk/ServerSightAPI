@@ -152,6 +152,7 @@ namespace ServerSightAPI.Migrations
             modelBuilder.Entity("ServerSightAPI.Models.Server.Server", b =>
                 {
                     b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
@@ -163,14 +164,14 @@ namespace ServerSightAPI.Migrations
                     b.Property<string>("ImagePath")
                         .HasColumnType("text");
 
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
                     b.Property<string>("OwnedById")
                         .HasColumnType("text");
 
                     b.Property<bool>("PowerStatus")
                         .HasColumnType("boolean");
-
-                    b.Property<string>("Title")
-                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
