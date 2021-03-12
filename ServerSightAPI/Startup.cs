@@ -58,6 +58,8 @@ namespace ServerSightAPI
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                // in production you should something like nginx or caddy
+                app.UseConfiguredStaticFiles(env);
             }
 
             app.UseCors("CorsPolicy");
@@ -66,9 +68,10 @@ namespace ServerSightAPI
             app.UseSwaggerUi();
             
             app.UseHttpsRedirection();
+            app.ConfigureExceptionHandler();
 
             app.UseRouting();
-
+            
             app.UseResponseCaching();
             
             // for nginx reverse proxy header passing.
@@ -79,7 +82,7 @@ namespace ServerSightAPI
             
             app.UseAuthentication();
             app.UseAuthorization();
-
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

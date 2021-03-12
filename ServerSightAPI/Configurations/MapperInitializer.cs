@@ -17,6 +17,9 @@ namespace ServerSightAPI.Configurations
             CreateMap<Server, CreateServerDto>().ReverseMap();
             CreateMap<ServerDto, Server>().ReverseMap();
             CreateMap<Server, ServerDto>().ReverseMap();
+            
+            CreateMap<UpdateServerDto, Server>().ReverseMap();
+            CreateMap<Server, UpdateServerDto>().ReverseMap();
         }
     }
 }

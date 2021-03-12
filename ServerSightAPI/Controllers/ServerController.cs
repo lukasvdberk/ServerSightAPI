@@ -48,7 +48,6 @@ namespace ServerSightAPI.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IList<ServerDto>> GetServersOfUser([FromQuery] SearchServerDto searchServerDto)
         {
-            // TODO make separate function maybe?
             var user = await _userManager.FindByEmailAsync(HttpContext.User.Identity.Name);
             
             // only fetch servers from the user who requested it
@@ -79,13 +78,8 @@ namespace ServerSightAPI.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ServerDto> GetServer(Guid id)
         {
-            // TODO make separate function maybe?
-            var user = await _userManager.FindByEmailAsync(HttpContext.User.Identity.Name);
-            
-            // only fetch servers from the user who requested it
-            var server = await _unitOfWork.Servers.Get(expression: q => 
-                q.OwnedById == user.Id && q.Id == id.ToString()
-            );
+            var server = await GetUserHisServer(id);
+
             var serverMapped = _mapper.Map<ServerDto>(server);
 
             return serverMapped;
@@ -98,7 +92,6 @@ namespace ServerSightAPI.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ServerDto> SaveServer([FromBody] CreateServerDto serverDto)
         {
-            // TODO make separate function maybe?
             var user = await _userManager.FindByEmailAsync(HttpContext.User.Identity.Name);
             var server = _mapper.Map<Server>(serverDto);
             
@@ -109,6 +102,31 @@ namespace ServerSightAPI.Controllers
             
             return _mapper.Map<ServerDto>(server);
         }
+        
+        [HttpPut("{id:Guid}")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> SaveServer(Guid id, [FromBody] UpdateServerDto serverDto)
+        {
+            var server = await GetUserHisServer(id);
+
+            if (server == null)
+            {
+                return BadRequest();
+            }
+
+            var updatedServer = _mapper.Map<Server>(serverDto);
+            updatedServer.Id = id.ToString();
+            updatedServer.CreatedAt = server.CreatedAt;
+            updatedServer.ImagePath = server.ImagePath;
+            updatedServer.OwnedById = server.OwnedById;
+            
+            _unitOfWork.Servers.Update(updatedServer);
+            
+            return NoContent();
+        }
 
         [HttpPut("image/{id:Guid}")]
         [Authorize]
@@ -117,21 +135,14 @@ namespace ServerSightAPI.Controllers
         // [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> AddImageToServer(Guid id, [FromForm] IFormFile file)
         {
-            // TODO make separate function maybe?
-            var user = await _userManager.FindByEmailAsync(HttpContext.User.Identity.Name);
-            
-            // only fetch servers from the user who requested it
-            var server = await _unitOfWork.Servers.Get(expression: q => 
-                q.OwnedById == user.Id && q.Id == id.ToString()
-            );
+            var server = await GetUserHisServer(id);
 
             var formCollection = await Request.ReadFormAsync();
             var serverImage = formCollection.Files.First();
             
             if (server != null)
             {
-                string fName = serverImage.FileName;
-                // TODO set generic static map or something.
+                // TODO set folder from configuration
                 string relativePath = "Resources/Images/" + serverImage.FileName;
                 string path = Path.Combine(relativePath);
                 using (var stream = new FileStream(path, FileMode.Create))
@@ -139,12 +150,22 @@ namespace ServerSightAPI.Controllers
                     await serverImage.CopyToAsync(stream);
                 }
 
-                server.ImagePath = relativePath;
+                server.ImagePath = "Images/" + serverImage.FileName;;
                 _unitOfWork.Servers.Update(server);
                 return Ok();    
             }
 
             return BadRequest("Sever id is either null or you are not the owner of the server.");
+        }
+
+        private async Task<Server> GetUserHisServer(Guid serverId)
+        {
+            var user = await _userManager.FindByEmailAsync(HttpContext.User.Identity.Name);
+            
+            // only fetch servers from the user who requested it
+            return await _unitOfWork.Servers.Get(expression: q =>
+                q.OwnedById == user.Id && q.Id == serverId.ToString()
+            );
         }
     }
 }
