@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -101,6 +102,22 @@ namespace ServerSightAPI.Controllers
                     }));
             }
 
+            return Accepted(new
+            {
+                Token = await _authManager.CreateToken(user)
+            });
+        }
+        
+                
+        [HttpGet]
+        [Authorize]
+        [Route("refresh-jwt")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GenerateNewJwToken()
+        {
+            var user = await _userManager.FindByEmailAsync(HttpContext.User.Identity.Name);
             return Accepted(new
             {
                 Token = await _authManager.CreateToken(user)

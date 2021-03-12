@@ -130,9 +130,9 @@ namespace ServerSightAPI.Controllers
 
         [HttpPut("image/{id:Guid}")]
         [Authorize]
-        // [ProducesResponseType(StatusCodes.Status201Created)]
-        // [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        // [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> AddImageToServer(Guid id, [FromForm] IFormFile file)
         {
             var server = await GetUserHisServer(id);
