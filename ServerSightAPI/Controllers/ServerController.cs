@@ -114,7 +114,7 @@ namespace ServerSightAPI.Controllers
 
             if (server == null)
             {
-                return BadRequest();
+                return Unauthorized();
             }
 
             var updatedServer = _mapper.Map<Server>(serverDto);
@@ -136,7 +136,7 @@ namespace ServerSightAPI.Controllers
 
             if (server == null)
             {
-                return BadRequest();
+                return Unauthorized();
             }
 
             await _unitOfWork.Servers.Delete(id.ToString());
@@ -156,22 +156,22 @@ namespace ServerSightAPI.Controllers
             var formCollection = await Request.ReadFormAsync();
             var serverImage = formCollection.Files.First();
             
-            if (server != null)
+            if (server == null)
             {
-                // TODO set folder from configuration
-                string relativePath = "Resources/Images/" + serverImage.FileName;
-                string path = Path.Combine(relativePath);
-                using (var stream = new FileStream(path, FileMode.Create))
-                {
-                    await serverImage.CopyToAsync(stream);
-                }
-
-                server.ImagePath = "Images/" + serverImage.FileName;;
-                _unitOfWork.Servers.Update(server);
-                return Ok();    
+                return BadRequest("Sever id is either null or you are not the owner of the server.");
+            }
+            
+            // TODO set folder from configuration
+            string relativePath = "Resources/Images/" + serverImage.FileName;
+            string path = Path.Combine(relativePath);
+            using (var stream = new FileStream(path, FileMode.Create))
+            {
+                await serverImage.CopyToAsync(stream);
             }
 
-            return BadRequest("Sever id is either null or you are not the owner of the server.");
+            server.ImagePath = "Images/" + serverImage.FileName;;
+            _unitOfWork.Servers.Update(server);
+            return Ok();    
         }
 
         private async Task<Server> GetUserHisServer(Guid serverId)
