@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ServerSightAPI.DTO.User;
+using ServerSightAPI.Middleware;
 using ServerSightAPI.Models;
 using ServerSightAPI.Responses;
 using ServerSightAPI.Services;
@@ -15,6 +16,7 @@ using ServerSightAPI.Services;
 namespace ServerSightAPI.Controllers
 {
     [ApiController]
+    // TODO change to users/ with front-end
     [Route("api/user/")]
     public class UserController : ControllerBase
     {

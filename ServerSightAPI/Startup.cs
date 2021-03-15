@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ServerSightAPI.Configurations;
 using ServerSightAPI.Configurations.Services;
+using ServerSightAPI.Middleware;
 using ServerSightAPI.Repository;
 using ServerSightAPI.Services;
 
@@ -35,7 +37,7 @@ namespace ServerSightAPI
             services.AddHttpContextAccessor();
             
             services.ConfigureJwt(Configuration);
-            
+
             // provides an instances when the application aks one to inject
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IAuthManager, AuthManager>();

@@ -8,6 +8,7 @@ namespace ServerSightAPI.Configurations
     public class DatabaseContext : IdentityDbContext<User>
     {
         private DbSet<Server> Servers { get; set; }
+        private DbSet<ApiKey> ApiKeys { get; set; }
         public DatabaseContext(DbContextOptions options): base(options) {}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

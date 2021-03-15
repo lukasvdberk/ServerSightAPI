@@ -149,6 +149,28 @@ namespace ServerSightAPI.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("ServerSightAPI.Models.ApiKey", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("Key")
+                        .HasColumnType("text");
+
+                    b.Property<string>("OwnedById")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OwnedById");
+
+                    b.ToTable("ApiKeys");
+                });
+
             modelBuilder.Entity("ServerSightAPI.Models.Server.Server", b =>
                 {
                     b.Property<string>("Id")
@@ -293,6 +315,15 @@ namespace ServerSightAPI.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ServerSightAPI.Models.ApiKey", b =>
+                {
+                    b.HasOne("ServerSightAPI.Models.User", "OwnedBy")
+                        .WithMany()
+                        .HasForeignKey("OwnedById");
+
+                    b.Navigation("OwnedBy");
                 });
 
             modelBuilder.Entity("ServerSightAPI.Models.Server.Server", b =>

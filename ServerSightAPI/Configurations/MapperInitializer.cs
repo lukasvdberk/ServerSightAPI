@@ -1,4 +1,5 @@
 using AutoMapper;
+using ServerSightAPI.DTO.ApiKey;
 using ServerSightAPI.DTO.Server;
 using ServerSightAPI.DTO.User;
 using ServerSightAPI.Models;
@@ -20,6 +21,10 @@ namespace ServerSightAPI.Configurations
             
             CreateMap<UpdateServerDto, Server>().ReverseMap();
             CreateMap<Server, UpdateServerDto>().ReverseMap();
+            
+            CreateMap<ApiKey, ApiKeyDto>().ReverseMap();
+            CreateMap<ApiKeyDto, ApiKey>().ReverseMap();
+
         }
     }
 }
