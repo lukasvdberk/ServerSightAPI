@@ -119,11 +119,27 @@ namespace ServerSightAPI.Controllers
 
             var updatedServer = _mapper.Map<Server>(serverDto);
             updatedServer.Id = id.ToString();
-            updatedServer.CreatedAt = server.CreatedAt;
-            updatedServer.ImagePath = server.ImagePath;
-            updatedServer.OwnedById = server.OwnedById;
             
             _unitOfWork.Servers.Update(updatedServer);
+            
+            return NoContent();
+        }
+        
+        [HttpDelete("{id:Guid}")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> SaveServer(Guid id)
+        {
+            var server = await GetUserHisServer(id);
+
+            if (server == null)
+            {
+                return BadRequest();
+            }
+
+            await _unitOfWork.Servers.Delete(id.ToString());
             
             return NoContent();
         }

@@ -73,7 +73,7 @@ namespace ServerSightAPI.Repository
             await _db.AddRangeAsync(entities);
         }
 
-        public async Task Delete(int id)
+        public async Task Delete(string id)
         {
             var entity = await _db.FindAsync(id);
             _db.Remove(entity);
