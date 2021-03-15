@@ -171,6 +171,28 @@ namespace ServerSightAPI.Migrations
                     b.ToTable("ApiKeys");
                 });
 
+            modelBuilder.Entity("ServerSightAPI.Models.Server.NetworkAdapterServer", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("text");
+
+                    b.Property<string>("AdapterName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Ip")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ServerId")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ServerId");
+
+                    b.ToTable("NetworkAdapterServers");
+                });
+
             modelBuilder.Entity("ServerSightAPI.Models.Server.Server", b =>
                 {
                     b.Property<string>("Id")
@@ -324,6 +346,15 @@ namespace ServerSightAPI.Migrations
                         .HasForeignKey("OwnedById");
 
                     b.Navigation("OwnedBy");
+                });
+
+            modelBuilder.Entity("ServerSightAPI.Models.Server.NetworkAdapterServer", b =>
+                {
+                    b.HasOne("ServerSightAPI.Models.User", "Server")
+                        .WithMany()
+                        .HasForeignKey("ServerId");
+
+                    b.Navigation("Server");
                 });
 
             modelBuilder.Entity("ServerSightAPI.Models.Server.Server", b =>

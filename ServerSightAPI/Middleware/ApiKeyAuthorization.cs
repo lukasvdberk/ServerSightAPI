@@ -37,8 +37,8 @@ namespace ServerSightAPI.Middleware
         }
         public async void OnAuthorization(AuthorizationFilterContext context)
         {
-            
-            if (context.HttpContext.Request.Headers.TryGetValue("Authorization", out var apiKey))
+            // TODO configure via appsettings or something
+            if (context.HttpContext.Request.Headers.TryGetValue("X-Api-Key", out var apiKey))
             {
                 context.Result = new UnauthorizedResult();
                 return;

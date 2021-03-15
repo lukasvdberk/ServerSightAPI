@@ -9,6 +9,7 @@ namespace ServerSightAPI.Configurations
     {
         private DbSet<Server> Servers { get; set; }
         private DbSet<ApiKey> ApiKeys { get; set; }
+        private DbSet<NetworkAdapterServer> NetworkAdapterServers { get; set; }
         public DatabaseContext(DbContextOptions options): base(options) {}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
