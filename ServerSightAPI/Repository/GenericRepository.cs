@@ -71,6 +71,7 @@ namespace ServerSightAPI.Repository
         public async Task InsertRange(IEnumerable<T> entities)
         {
             await _db.AddRangeAsync(entities);
+            await _context.SaveChangesAsync();
         }
 
         public async Task Delete(string id)

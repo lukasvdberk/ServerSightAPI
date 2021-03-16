@@ -350,7 +350,7 @@ namespace ServerSightAPI.Migrations
 
             modelBuilder.Entity("ServerSightAPI.Models.Server.NetworkAdapterServer", b =>
                 {
-                    b.HasOne("ServerSightAPI.Models.User", "Server")
+                    b.HasOne("ServerSightAPI.Models.Server.Server", "Server")
                         .WithMany()
                         .HasForeignKey("ServerId");
 

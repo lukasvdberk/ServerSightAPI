@@ -12,6 +12,6 @@ namespace ServerSightAPI.Models.Server
 
         [ForeignKey(nameof(Server))]
         public string ServerId { get; set; }
-        public User Server { get; set; }
+        public Server Server { get; set; }
     }
 }

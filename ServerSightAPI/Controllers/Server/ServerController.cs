@@ -119,7 +119,9 @@ namespace ServerSightAPI.Controllers
 
             var updatedServer = _mapper.Map<Server>(serverDto);
             updatedServer.Id = id.ToString();
-            
+            updatedServer.OwnedById = server.OwnedById;
+            updatedServer.ImagePath = server.ImagePath;
+
             _unitOfWork.Servers.Update(updatedServer);
             
             return NoContent();
