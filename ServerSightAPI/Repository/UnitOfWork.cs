@@ -14,7 +14,7 @@ namespace ServerSightAPI.Repository
         private IGenericRepository<ApiKey> _apiKeys;
         private IGenericRepository<NetworkAdapterServer> _networkAdapterServer;
         private IGenericRepository<HardDiskServer> _hardDiskServer;
-
+        private IGenericRepository<PortServer> _portServers;
 
         public UnitOfWork(DatabaseContext context)
         {
@@ -25,6 +25,7 @@ namespace ServerSightAPI.Repository
         public IGenericRepository<ApiKey> ApiKeys => _apiKeys ??= new GenericRepository<ApiKey>(_context);
         public IGenericRepository<NetworkAdapterServer> NetworkAdaptersServer => _networkAdapterServer ??= new GenericRepository<NetworkAdapterServer>(_context);
         public IGenericRepository<HardDiskServer> HardDisksServers => _hardDiskServer ??= new GenericRepository<HardDiskServer>(_context);
+        public IGenericRepository<PortServer> PortsServer => _portServers ??= new GenericRepository<PortServer>(_context);
 
 
         public void Dispose()

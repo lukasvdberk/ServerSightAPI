@@ -218,6 +218,25 @@ namespace ServerSightAPI.Migrations
                     b.ToTable("NetworkAdapterServers");
                 });
 
+            modelBuilder.Entity("ServerSightAPI.Models.Server.PortServer", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Port")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ServerId")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ServerId");
+
+                    b.ToTable("PortServers");
+                });
+
             modelBuilder.Entity("ServerSightAPI.Models.Server.Server", b =>
                 {
                     b.Property<string>("Id")
@@ -383,6 +402,15 @@ namespace ServerSightAPI.Migrations
                 });
 
             modelBuilder.Entity("ServerSightAPI.Models.Server.NetworkAdapterServer", b =>
+                {
+                    b.HasOne("ServerSightAPI.Models.Server.Server", "Server")
+                        .WithMany()
+                        .HasForeignKey("ServerId");
+
+                    b.Navigation("Server");
+                });
+
+            modelBuilder.Entity("ServerSightAPI.Models.Server.PortServer", b =>
                 {
                     b.HasOne("ServerSightAPI.Models.Server.Server", "Server")
                         .WithMany()

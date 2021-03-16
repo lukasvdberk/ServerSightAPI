@@ -11,6 +11,7 @@ namespace ServerSightAPI.Configurations
         private DbSet<ApiKey> ApiKeys { get; set; }
         private DbSet<NetworkAdapterServer> NetworkAdapterServers { get; set; }
         private DbSet<HardDiskServer> HardDiskServers { get; set; }
+        private DbSet<PortServer> PortServers { get; set; }
         public DatabaseContext(DbContextOptions options): base(options) {}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
