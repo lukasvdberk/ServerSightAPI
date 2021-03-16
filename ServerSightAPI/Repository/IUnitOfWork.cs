@@ -11,5 +11,6 @@ namespace ServerSightAPI.Repository
         IGenericRepository<ApiKey> ApiKeys { get; }
         
         IGenericRepository<NetworkAdapterServer> NetworkAdaptersServer { get; }
+        IGenericRepository<HardDiskServer> HardDisksServers { get; }
     }
 }

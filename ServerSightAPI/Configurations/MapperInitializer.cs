@@ -1,6 +1,7 @@
 using AutoMapper;
 using ServerSightAPI.DTO.ApiKey;
 using ServerSightAPI.DTO.Server;
+using ServerSightAPI.DTO.Server.HardDiskServer;
 using ServerSightAPI.DTO.Server.NetworkAdapterServer;
 using ServerSightAPI.DTO.User;
 using ServerSightAPI.Models;
@@ -31,6 +32,9 @@ namespace ServerSightAPI.Configurations
 
             CreateMap<NetworkAdapterServer, NetworkAdapterServerDto>().ReverseMap();
             CreateMap<NetworkAdapterServerDto, NetworkAdapterServer>().ReverseMap();
+
+            CreateMap<CreateHardDiskServer, HardDiskServer>().ReverseMap();
+            CreateMap<HardDiskServer, CreateHardDiskServer>().ReverseMap();
 
         }
     }

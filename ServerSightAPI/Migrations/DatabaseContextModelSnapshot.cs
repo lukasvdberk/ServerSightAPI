@@ -171,6 +171,31 @@ namespace ServerSightAPI.Migrations
                     b.ToTable("ApiKeys");
                 });
 
+            modelBuilder.Entity("ServerSightAPI.Models.Server.HardDiskServer", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("text");
+
+                    b.Property<string>("DiskName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ServerId")
+                        .HasColumnType("text");
+
+                    b.Property<float>("SpaceAvailable")
+                        .HasColumnType("real");
+
+                    b.Property<float>("SpaceTotal")
+                        .HasColumnType("real");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ServerId");
+
+                    b.ToTable("HardDiskServers");
+                });
+
             modelBuilder.Entity("ServerSightAPI.Models.Server.NetworkAdapterServer", b =>
                 {
                     b.Property<string>("Id")
@@ -346,6 +371,15 @@ namespace ServerSightAPI.Migrations
                         .HasForeignKey("OwnedById");
 
                     b.Navigation("OwnedBy");
+                });
+
+            modelBuilder.Entity("ServerSightAPI.Models.Server.HardDiskServer", b =>
+                {
+                    b.HasOne("ServerSightAPI.Models.Server.Server", "Server")
+                        .WithMany()
+                        .HasForeignKey("ServerId");
+
+                    b.Navigation("Server");
                 });
 
             modelBuilder.Entity("ServerSightAPI.Models.Server.NetworkAdapterServer", b =>
