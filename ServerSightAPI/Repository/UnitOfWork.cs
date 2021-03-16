@@ -12,7 +12,8 @@ namespace ServerSightAPI.Repository
         private readonly DatabaseContext _context;
         private IGenericRepository<Server> _server;
         private IGenericRepository<ApiKey> _apiKeys;
-        
+        private IGenericRepository<NetworkAdapterServer> _networkAdapterServer;
+
         public UnitOfWork(DatabaseContext context)
         {
             _context = context;
@@ -20,6 +21,8 @@ namespace ServerSightAPI.Repository
         // ??= is a shortcut for set if it does not exist
         public IGenericRepository<Server> Servers => _server ??= new GenericRepository<Server>(_context);
         public IGenericRepository<ApiKey> ApiKeys => _apiKeys ??= new GenericRepository<ApiKey>(_context);
+        public IGenericRepository<NetworkAdapterServer> NetworkAdaptersServer => _networkAdapterServer ??= new GenericRepository<NetworkAdapterServer>(_context);
+
 
         public void Dispose()
         {

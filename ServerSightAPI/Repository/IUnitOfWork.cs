@@ -9,5 +9,7 @@ namespace ServerSightAPI.Repository
     {
         IGenericRepository<Server> Servers { get; }
         IGenericRepository<ApiKey> ApiKeys { get; }
+        
+        IGenericRepository<NetworkAdapterServer> NetworkAdaptersServer { get; }
     }
 }

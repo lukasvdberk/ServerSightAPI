@@ -8,56 +8,51 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ServerSightAPI.Controllers;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using ServerSightAPI.Models;
 using ServerSightAPI.Repository;
 
 namespace ServerSightAPI.Middleware
 {
     // usage [ApiKeyAuthorization] on any given route
-    public class ApiKeyAuthorization :  AuthorizeAttribute, IAuthorizationFilter
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
+    public class ApiKeyAuthorization :  Attribute, IAsyncAuthorizationFilter
     {
-        private readonly ILogger<ApiKeyAuthorization> _logger;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly UserManager<User> _userManager;
+        public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
+        {
+            var userManager = context.HttpContext.RequestServices.GetService(typeof(UserManager<User>)) as UserManager<User>;
+            var unitOfWork = context.HttpContext.RequestServices.GetService(typeof(IUnitOfWork)) as IUnitOfWork;
 
-        public ApiKeyAuthorization(
-            ILogger<ApiKeyAuthorization> logger, 
-            IUnitOfWork unitOfWork,
-            UserManager<User> userManager
-        )
-        {
-            _logger = logger;
-            _unitOfWork = unitOfWork;
-            _userManager = userManager;
-        }
-        public async void OnAuthorization(AuthorizationFilterContext context)
-        {
             // TODO configure via appsettings or something
             if (context.HttpContext.Request.Headers.TryGetValue("X-Api-Key", out var apiKey))
             {
-                context.Result = new UnauthorizedResult();
-                return;
-            }
+                if (apiKey.Count == 0 || string.IsNullOrWhiteSpace(apiKey))
+                {
+                    context.Result = new UnauthorizedResult();
+                    return;
+                }
+                string apiKeyStr = apiKey.ToString();
 
-            if (apiKey.Count == 0 || string.IsNullOrWhiteSpace(apiKey))
+                var apiKeyDb = await unitOfWork.ApiKeys.Get(q => q.Key == apiKeyStr);
+
+                if (apiKeyDb == null)
+                {
+                    context.Result = new UnauthorizedResult();
+                    return;
+                }
+                var user = await userManager.FindByIdAsync(apiKeyDb.OwnedById);
+                var roles = await userManager.GetRolesAsync(user);
+                context.HttpContext.User = new GenericPrincipal(new ClaimsIdentity(user.Email), roles.ToArray());   
+            }
+            else
             {
                 context.Result = new UnauthorizedResult();
-                return;
             }
-
-            var apiKeyDb = await _unitOfWork.ApiKeys.Get(q => q.Key == apiKey, includes: new List<string>
-            {
-                "User"
-            });
-
-            var user = await _userManager.FindByEmailAsync(apiKeyDb.OwnedBy.Email);
-            var roles = await _userManager.GetRolesAsync(user);
-            context.HttpContext.User = new GenericPrincipal(new ClaimsIdentity(user.Email), roles.ToArray());
         }
     }
 }
