@@ -6,11 +6,11 @@ namespace ServerSightAPI.Models.Server
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string Id { get; set; }
-        
+
         public int Port { get; set; }
-        
-        [ForeignKey(nameof(Server))]
-        public string ServerId { get; set; }
+
+        [ForeignKey(nameof(Server))] public string ServerId { get; set; }
+
         public Server Server { get; set; }
     }
 }

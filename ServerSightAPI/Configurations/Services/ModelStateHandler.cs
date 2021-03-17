@@ -10,7 +10,8 @@ namespace ServerSightAPI.Configurations.Services
         public static void ConfigureModelStateHandler(this IServiceCollection services)
         {
             services.AddMvc()
-                .ConfigureApiBehaviorOptions(options => {
+                .ConfigureApiBehaviorOptions(options =>
+                {
                     //options.SuppressModelStateInvalidFilter = true;
                     options.InvalidModelStateResponseFactory = actionContext =>
                     {
@@ -18,12 +19,8 @@ namespace ServerSightAPI.Configurations.Services
 
                         var fieldErrorsList = new List<FieldError>();
                         foreach (var model in modelState)
-                        {
-                            foreach (var error in model.Value.Errors)
-                            {
-                                fieldErrorsList.Add(new FieldError(model.Key, error.ErrorMessage));
-                            }
-                        }
+                        foreach (var error in model.Value.Errors)
+                            fieldErrorsList.Add(new FieldError(model.Key, error.ErrorMessage));
                         var fieldErrors = new FieldErrors(fieldErrorsList);
                         return new BadRequestObjectResult(fieldErrors);
                     };

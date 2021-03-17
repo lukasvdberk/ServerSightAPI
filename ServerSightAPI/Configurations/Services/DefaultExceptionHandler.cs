@@ -25,7 +25,7 @@ namespace ServerSightAPI.Configurations.Services
                         await context.Response.WriteAsync(new Error
                         {
                             StatusCode = context.Response.StatusCode,
-                            Message = $"Internal server error. Please try again later."
+                            Message = "Internal server error. Please try again later."
                         }.ToString());
                     }
                 });

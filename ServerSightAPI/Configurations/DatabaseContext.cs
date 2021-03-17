@@ -7,12 +7,15 @@ namespace ServerSightAPI.Configurations
 {
     public class DatabaseContext : IdentityDbContext<User>
     {
+        public DatabaseContext(DbContextOptions options) : base(options)
+        {
+        }
+
         private DbSet<Server> Servers { get; set; }
         private DbSet<ApiKey> ApiKeys { get; set; }
         private DbSet<NetworkAdapterServer> NetworkAdapterServers { get; set; }
         private DbSet<HardDiskServer> HardDiskServers { get; set; }
         private DbSet<PortServer> PortServers { get; set; }
-        public DatabaseContext(DbContextOptions options): base(options) {}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

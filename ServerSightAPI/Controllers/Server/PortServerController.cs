@@ -24,7 +24,7 @@ namespace ServerSightAPI.Controllers
         private readonly IUnitOfWork _unitOfWork;
 
         public PortServerController(
-            ILogger<PortServerController> logger, 
+            ILogger<PortServerController> logger,
             UserManager<User> userManager,
             IMapper mapper,
             IUnitOfWork unitOfWork
@@ -34,7 +34,7 @@ namespace ServerSightAPI.Controllers
             _mapper = mapper;
             _unitOfWork = unitOfWork;
         }
-        
+
         [HttpGet]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -57,17 +57,14 @@ namespace ServerSightAPI.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> SetOpenPortsForServer(
-            Guid serverId, 
+            Guid serverId,
             [FromBody] IList<PortServer> portServersDto
         )
         {
             var server = await ServerUtilController.GetUserHisServerFromApiKey(serverId, HttpContext);
-            
-            if (server == null)
-            {
-                return BadRequest("Sever id is either null or you are not the owner of the server.");
-            }
-            
+
+            if (server == null) return BadRequest("Sever id is either null or you are not the owner of the server.");
+
             var portServers = _mapper.Map<IList<PortServer>>(portServersDto);
             // set the right server id
             portServers.ForAll(s => s.ServerId = serverId.ToString());
@@ -77,14 +74,14 @@ namespace ServerSightAPI.Controllers
             await _unitOfWork.PortsServer.InsertRange(portServers);
             return NoContent();
         }
-        
+
 
         private async Task RemoveExistingPortsOfServer(string serverId)
         {
             var existingPorts = await _unitOfWork.PortsServer.GetAll(
                 q => q.ServerId == serverId
             );
-            
+
             _unitOfWork.PortsServer.DeleteRange(existingPorts);
         }
     }

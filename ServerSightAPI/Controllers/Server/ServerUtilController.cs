@@ -12,18 +12,18 @@ namespace ServerSightAPI.Controllers
         {
             if (httpContext.Request.Headers.TryGetValue("X-Api-Key", out var apiKey))
             {
-                string apiKeyStr = apiKey.ToString();
+                var apiKeyStr = apiKey.ToString();
                 var unitOfWork = httpContext.RequestServices.GetService(typeof(IUnitOfWork)) as IUnitOfWork;
 
                 var apiKeyDb = await unitOfWork.ApiKeys.Get(q => q.Key == apiKeyStr);
-            
+
                 // only fetch servers from the user who requested it
-                return await unitOfWork.Servers.Get(expression: q =>
+                return await unitOfWork.Servers.Get(q =>
                     q.OwnedById == apiKeyDb.OwnedById && q.Id == serverId.ToString()
                 );
             }
 
             return null;
-        } 
+        }
     }
 }

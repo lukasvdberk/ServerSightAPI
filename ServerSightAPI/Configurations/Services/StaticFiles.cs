@@ -11,7 +11,7 @@ namespace ServerSightAPI.Configurations.Services
         {
             app.UseStaticFiles(new StaticFileOptions
             {
-                FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath,"Resources/")),
+                FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "Resources/")),
                 RequestPath = "/assets"
             });
         }

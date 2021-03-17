@@ -1,13 +1,12 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
 using ServerSightAPI.Configurations;
 using ServerSightAPI.Configurations.Services;
-using ServerSightAPI.Middleware;
 using ServerSightAPI.Repository;
 using ServerSightAPI.Services;
 
@@ -30,28 +29,28 @@ namespace ServerSightAPI
             services.AddAuthentication();
             services.AddAuthorization();
             services.ConfigureIdentity();
-            
+
             services.AddControllers();
-            
+
             services.ConfigureCorsHeaders();
             services.AddHttpContextAccessor();
-            
+
             services.ConfigureJwt(Configuration);
 
             // provides an instances when the application aks one to inject
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IAuthManager, AuthManager>();
-            
+
             services.AddAutoMapper(typeof(MapperInitializer));
-            
+
             services.ConfigureSwagger();
-            
+
             services.AddMemoryCache();
             services.ConfigureModelStateHandler();
-            
-            services.AddControllers().AddNewtonsoftJson(op => 
-                op.SerializerSettings.ReferenceLoopHandling = 
-                    Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
+            services.AddControllers().AddNewtonsoftJson(op =>
+                op.SerializerSettings.ReferenceLoopHandling =
+                    ReferenceLoopHandling.Ignore);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -68,27 +67,24 @@ namespace ServerSightAPI
 
             app.UseSwagger();
             app.UseSwaggerUi();
-            
+
             app.UseHttpsRedirection();
             app.ConfigureExceptionHandler();
 
             app.UseRouting();
-            
+
             app.UseResponseCaching();
-            
+
             // for nginx reverse proxy header passing.
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
-            
+
             app.UseAuthentication();
             app.UseAuthorization();
-            
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
 }

@@ -14,7 +14,6 @@ namespace ServerSightAPI.Configurations.Services
                 var postgreSqlConnection = new NpgsqlConnection(configuration.GetConnectionString("sqlConnection"));
                 options.UseNpgsql(postgreSqlConnection);
             });
-
         }
     }
 }

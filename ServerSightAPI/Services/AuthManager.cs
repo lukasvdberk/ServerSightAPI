@@ -13,10 +13,10 @@ namespace ServerSightAPI.Services
 {
     public class AuthManager : IAuthManager
     {
-        private readonly UserManager<User> _userManager;
         private readonly IConfiguration _configuration;
+        private readonly UserManager<User> _userManager;
         private User _user;
-        
+
         public AuthManager(UserManager<User> userManager, IConfiguration configuration)
         {
             _userManager = userManager;
@@ -45,14 +45,11 @@ namespace ServerSightAPI.Services
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, _user.UserName),
+                new(ClaimTypes.Name, _user.UserName)
             };
 
             var roles = await _userManager.GetRolesAsync(_user);
-            foreach (var role in roles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role));
-            }
+            foreach (var role in roles) claims.Add(new Claim(ClaimTypes.Role, role));
 
             return claims;
         }
@@ -61,9 +58,9 @@ namespace ServerSightAPI.Services
         {
             var jwtSettings = _configuration.GetSection("Jwt");
             var expiration = DateTime.Now.AddMinutes(Convert.ToInt32(jwtSettings.GetSection("Lifetime").Value));
-            
+
             var tokenOptions = new JwtSecurityToken(
-                issuer: jwtSettings.GetSection("Issuer").Value,
+                jwtSettings.GetSection("Issuer").Value,
                 claims: claims,
                 expires: expiration,
                 signingCredentials: signingCredentials

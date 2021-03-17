@@ -4,6 +4,5 @@ namespace ServerSightAPI.Models
 {
     public class User : IdentityUser
     {
-        
     }
 }

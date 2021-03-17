@@ -15,16 +15,16 @@ namespace ServerSightAPI.Configurations
         public MapperInitializer()
         {
             CreateMap<User, UserDTO>().ReverseMap();
-            
+
             // server mapping
             CreateMap<CreateServerDto, Server>().ReverseMap();
             CreateMap<Server, CreateServerDto>().ReverseMap();
             CreateMap<ServerDto, Server>().ReverseMap();
             CreateMap<Server, ServerDto>().ReverseMap();
-            
+
             CreateMap<UpdateServerDto, Server>().ReverseMap();
             CreateMap<Server, UpdateServerDto>().ReverseMap();
-            
+
             CreateMap<ApiKey, ApiKeyDto>().ReverseMap();
             CreateMap<ApiKeyDto, ApiKey>().ReverseMap();
 
@@ -39,7 +39,6 @@ namespace ServerSightAPI.Configurations
 
             CreateMap<PortServer, CreatePortServerDto>().ReverseMap();
             CreateMap<CreatePortServerDto, PortServer>().ReverseMap();
-
         }
     }
 }

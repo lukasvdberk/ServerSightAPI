@@ -18,14 +18,14 @@ namespace ServerSightAPI.Controllers
 {
     [ApiController]
     [Route("api/servers/{serverId:Guid}/hard-disks")]
-    public class HardDiskServerController: ControllerBase
+    public class HardDiskServerController : ControllerBase
     {
         private readonly ILogger<HardDiskServerController> _logger;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
 
         public HardDiskServerController(
-            ILogger<HardDiskServerController> logger, 
+            ILogger<HardDiskServerController> logger,
             UserManager<User> userManager,
             IMapper mapper,
             IUnitOfWork unitOfWork
@@ -35,8 +35,8 @@ namespace ServerSightAPI.Controllers
             _mapper = mapper;
             _unitOfWork = unitOfWork;
         }
-        
-                [HttpGet]
+
+        [HttpGet]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -58,17 +58,14 @@ namespace ServerSightAPI.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> SetHardDisksForServer(
-            Guid serverId, 
+            Guid serverId,
             [FromBody] IList<CreateHardDiskServer> hardDiskServersDto
         )
         {
             var server = await ServerUtilController.GetUserHisServerFromApiKey(serverId, HttpContext);
-            
-            if (server == null)
-            {
-                return BadRequest("Sever id is either null or you are not the owner of the server.");
-            }
-            
+
+            if (server == null) return BadRequest("Sever id is either null or you are not the owner of the server.");
+
             var hardDiskServers = _mapper.Map<IList<HardDiskServer>>(hardDiskServersDto);
             // set the right server id
             hardDiskServers.ForAll(s => s.ServerId = serverId.ToString());
@@ -78,14 +75,14 @@ namespace ServerSightAPI.Controllers
             await _unitOfWork.HardDisksServers.InsertRange(hardDiskServers);
             return NoContent();
         }
-        
+
 
         private async Task RemoveExistingHardDisksOfServer(string serverId)
         {
             var existingHardDisks = await _unitOfWork.HardDisksServers.GetAll(
                 q => q.ServerId == serverId
             );
-            
+
             _unitOfWork.HardDisksServers.DeleteRange(existingHardDisks);
         }
     }
