@@ -13,6 +13,7 @@ namespace ServerSightAPI.Repository
         private IGenericRepository<NetworkAdapterServer> _networkAdapterServer;
         private IGenericRepository<PortServer> _portServers;
         private IGenericRepository<CpuUsageServer> _cpuUsages;
+        private IGenericRepository<RamUsage> _ramUsages;
         private IGenericRepository<Server> _server;
 
         public UnitOfWork(DatabaseContext context)
@@ -35,6 +36,9 @@ namespace ServerSightAPI.Repository
 
         public IGenericRepository<CpuUsageServer> CpuUsagesServers =>
             _cpuUsages ??= new GenericRepository<CpuUsageServer>(_context);
+
+        public IGenericRepository<RamUsage> RAMUsages =>
+            _ramUsages ??= new GenericRepository<RamUsage>(_context);
 
 
         public void Dispose()

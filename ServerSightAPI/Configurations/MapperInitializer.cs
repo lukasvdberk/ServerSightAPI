@@ -16,7 +16,6 @@ namespace ServerSightAPI.Configurations
         {
             CreateMap<User, UserDTO>().ReverseMap();
 
-            // server mapping
             CreateMap<CreateServerDto, Server>().ReverseMap();
             CreateMap<Server, CreateServerDto>().ReverseMap();
             CreateMap<ServerDto, Server>().ReverseMap();
@@ -42,6 +41,12 @@ namespace ServerSightAPI.Configurations
             
             CreateMap<CpuUsageDto, CpuUsageServer>().ReverseMap();
             CreateMap<CpuUsageServer, CpuUsageDto>().ReverseMap();
+            
+            CreateMap<RamUsage, CreateRamUsageDto>().ReverseMap();
+            CreateMap<CreateRamUsageDto, RamUsage>().ReverseMap();
+            
+            CreateMap<RamUsage, RamUsageDto>().ReverseMap();
+            CreateMap<RamUsageDto, RamUsage>().ReverseMap();
         }
     }
 }

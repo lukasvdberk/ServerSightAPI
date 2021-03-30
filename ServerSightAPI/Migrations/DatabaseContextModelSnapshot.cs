@@ -259,6 +259,31 @@ namespace ServerSightAPI.Migrations
                     b.ToTable("PortServers");
                 });
 
+            modelBuilder.Entity("ServerSightAPI.Models.Server.RamUsage", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("ServerId")
+                        .HasColumnType("text");
+
+                    b.Property<double>("TotalAvailableInBytes")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("UsageInBytes")
+                        .HasColumnType("double precision");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ServerId");
+
+                    b.ToTable("RamUsages");
+                });
+
             modelBuilder.Entity("ServerSightAPI.Models.Server.Server", b =>
                 {
                     b.Property<string>("Id")
@@ -442,6 +467,15 @@ namespace ServerSightAPI.Migrations
                 });
 
             modelBuilder.Entity("ServerSightAPI.Models.Server.PortServer", b =>
+                {
+                    b.HasOne("ServerSightAPI.Models.Server.Server", "Server")
+                        .WithMany()
+                        .HasForeignKey("ServerId");
+
+                    b.Navigation("Server");
+                });
+
+            modelBuilder.Entity("ServerSightAPI.Models.Server.RamUsage", b =>
                 {
                     b.HasOne("ServerSightAPI.Models.Server.Server", "Server")
                         .WithMany()

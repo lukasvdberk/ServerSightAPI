@@ -17,7 +17,7 @@ namespace ServerSightAPI.Configurations
         private DbSet<HardDiskServer> HardDiskServers { get; set; }
         private DbSet<PortServer> PortServers { get; set; }
         private DbSet<CpuUsageServer> CpuUsageServers { get; set; }
-
+        private DbSet<RamUsage> RamUsages { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
