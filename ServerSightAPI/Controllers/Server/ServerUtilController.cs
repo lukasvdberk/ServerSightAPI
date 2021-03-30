@@ -1,6 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using ServerSightAPI.Models;
 using ServerSightAPI.Models.Server;
 using ServerSightAPI.Repository;
 
@@ -24,6 +26,19 @@ namespace ServerSightAPI.Controllers
             }
 
             return null;
+        }
+        
+        public static async Task<Server> GetServerFromJwt(Guid serverId, HttpContext httpContext)
+        {
+            var userManager =
+                httpContext.RequestServices.GetService(typeof(UserManager<User>)) as UserManager<User>;
+            var unitOfWork = httpContext.RequestServices.GetService(typeof(IUnitOfWork)) as IUnitOfWork;
+            var user = await userManager.FindByEmailAsync(httpContext.User.Identity.Name);
+
+            // only fetch servers from the user who requested it
+            return await unitOfWork.Servers.Get(q =>
+                q.OwnedById == user.Id && q.Id == serverId.ToString()
+            );
         }
     }
 }

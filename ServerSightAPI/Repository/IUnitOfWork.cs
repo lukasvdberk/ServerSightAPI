@@ -12,5 +12,6 @@ namespace ServerSightAPI.Repository
         IGenericRepository<NetworkAdapterServer> NetworkAdaptersServer { get; }
         IGenericRepository<HardDiskServer> HardDisksServers { get; }
         IGenericRepository<PortServer> PortsServer { get; }
+        IGenericRepository<CpuUsageServer> CpuUsagesServers { get; }
     }
 }

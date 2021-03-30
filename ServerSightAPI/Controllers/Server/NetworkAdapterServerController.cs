@@ -23,18 +23,15 @@ namespace ServerSightAPI.Controllers
         private readonly ILogger<NetworkAdapterServerController> _logger;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly UserManager<User> _userManager;
 
         public NetworkAdapterServerController(
             ILogger<NetworkAdapterServerController> logger,
-            UserManager<User> userManager,
             IMapper mapper,
             IUnitOfWork unitOfWork
         )
         {
             _logger = logger;
             _mapper = mapper;
-            _userManager = userManager;
             _unitOfWork = unitOfWork;
         }
 
@@ -43,16 +40,17 @@ namespace ServerSightAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IList<NetworkAdapterServerDto>> GetNetworkServerAdapters(Guid serverId)
+        public async Task<IActionResult> GetNetworkServerAdapters(Guid serverId)
         {
-            var server = await GetUserHisServer(serverId);
+            var server = await ServerUtilController.GetServerFromJwt(serverId, HttpContext);
 
+            if (server == null) return BadRequest("Server id is either null or you are not the owner");
             var networkAdapterServers = await _unitOfWork.NetworkAdaptersServer.GetAll(
                 q => q.ServerId == server.Id
             );
             var networkAdaptersServersMapped = _mapper.Map<IList<NetworkAdapterServerDto>>(networkAdapterServers);
 
-            return networkAdaptersServersMapped;
+            return Ok(networkAdaptersServersMapped);
         }
 
         [HttpPut]
@@ -65,9 +63,9 @@ namespace ServerSightAPI.Controllers
             [FromBody] IList<CreateNetworkAdapterServerDto> networkAdapterServerDto
         )
         {
-            var server = await GetUserHisServer(serverId);
+            var server = await ServerUtilController.GetUserHisServerFromApiKey(serverId, HttpContext);
 
-            if (server == null) return BadRequest("Sever id is either null or you are not the owner of the server.");
+            if (server == null) return BadRequest("Server id is either null or you are not the owner of the server.");
 
             var networkAdaptersOfServer = _mapper.Map<IList<NetworkAdapterServer>>(networkAdapterServerDto);
             // set the right server id
@@ -77,23 +75,6 @@ namespace ServerSightAPI.Controllers
             await RemoveExistingNetworkAdaptersOfServer(serverId.ToString());
             await _unitOfWork.NetworkAdaptersServer.InsertRange(networkAdaptersOfServer);
             return NoContent();
-        }
-
-        // TODO refactor to generic utility function
-        private async Task<Server> GetUserHisServer(Guid serverId)
-        {
-            if (HttpContext.Request.Headers.TryGetValue("X-Api-Key", out var apiKey))
-            {
-                var apiKeyStr = apiKey.ToString();
-                var apiKeyDb = await _unitOfWork.ApiKeys.Get(q => q.Key == apiKeyStr);
-
-                // only fetch servers from the user who requested it
-                return await _unitOfWork.Servers.Get(q =>
-                    q.OwnedById == apiKeyDb.OwnedById && q.Id == serverId.ToString()
-                );
-            }
-
-            return null;
         }
 
         private async Task RemoveExistingNetworkAdaptersOfServer(string serverId)

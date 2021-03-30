@@ -42,7 +42,7 @@ namespace ServerSightAPI.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IList<PortServer>> GetServerPorts(Guid serverId)
         {
-            var server = await ServerUtilController.GetUserHisServerFromApiKey(serverId, HttpContext);
+            var server = await ServerUtilController.GetServerFromJwt(serverId, HttpContext);
 
             var portsOfServer = await _unitOfWork.PortsServer.GetAll(
                 q => q.ServerId == server.Id

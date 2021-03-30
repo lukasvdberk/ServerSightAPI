@@ -16,6 +16,7 @@ namespace ServerSightAPI.Configurations
         private DbSet<NetworkAdapterServer> NetworkAdapterServers { get; set; }
         private DbSet<HardDiskServer> HardDiskServers { get; set; }
         private DbSet<PortServer> PortServers { get; set; }
+        private DbSet<CpuUsageServer> CpuUsageServers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

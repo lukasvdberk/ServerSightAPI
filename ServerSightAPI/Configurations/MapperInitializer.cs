@@ -39,6 +39,9 @@ namespace ServerSightAPI.Configurations
 
             CreateMap<PortServer, CreatePortServerDto>().ReverseMap();
             CreateMap<CreatePortServerDto, PortServer>().ReverseMap();
+            
+            CreateMap<CpuUsageDto, CpuUsageServer>().ReverseMap();
+            CreateMap<CpuUsageServer, CpuUsageDto>().ReverseMap();
         }
     }
 }

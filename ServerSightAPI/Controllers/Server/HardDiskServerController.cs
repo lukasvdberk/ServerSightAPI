@@ -38,12 +38,12 @@ namespace ServerSightAPI.Controllers
 
         [HttpGet]
         [Authorize]
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IList<HardDiskServer>> GetHardDisksOfServer(Guid serverId)
         {
-            var server = await ServerUtilController.GetUserHisServerFromApiKey(serverId, HttpContext);
+            var server = await ServerUtilController.GetServerFromJwt(serverId, HttpContext);
 
             var hardDiskServers = await _unitOfWork.HardDisksServers.GetAll(
                 q => q.ServerId == server.Id

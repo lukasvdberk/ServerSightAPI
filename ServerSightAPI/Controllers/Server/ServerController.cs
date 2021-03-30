@@ -144,7 +144,7 @@ namespace ServerSightAPI.Controllers
             var formCollection = await Request.ReadFormAsync();
             var serverImage = formCollection.Files.First();
 
-            if (server == null) return BadRequest("Sever id is either null or you are not the owner of the server.");
+            if (server == null) return BadRequest("Server id is either null or you are not the owner of the server.");
 
             // TODO set folder from configuration
             var relativePath = "Resources/Images/" + serverImage.FileName;

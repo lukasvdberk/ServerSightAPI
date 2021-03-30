@@ -22,15 +22,26 @@ namespace ServerSightAPI.Repository
         public async Task<IList<T>> GetAll(Expression<Func<T, bool>> expression = null,
             Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, List<string> includes = null)
         {
+
             IQueryable<T> query = _db;
 
-            if (expression != null) query = query.Where(expression);
+            if (expression != null)
+            {
+                query = query.Where(expression);
+            }
 
-            if (orderBy != null) query = orderBy(query);
+            if (orderBy != null)
+            {
+                query = orderBy(query);
+            }
 
             if (includes != null)
+            {
                 foreach (var includeProperty in includes)
+                {
                     query = query.Include(includeProperty);
+                }   
+            }
             return await query.AsNoTracking().ToListAsync();
         }
 
