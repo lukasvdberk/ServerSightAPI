@@ -1,3 +1,4 @@
+using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -5,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
+using ServerSightAPI.Background;
 using ServerSightAPI.Configurations;
 using ServerSightAPI.Configurations.Services;
 using ServerSightAPI.Repository;
@@ -40,14 +42,18 @@ namespace ServerSightAPI
             // provides an instances when the application aks one to inject
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IAuthManager, AuthManager>();
-
+            services.AddScoped<IServerPowerStatusSetter, ServerPowerStatusSetter>();
+            
             services.AddAutoMapper(typeof(MapperInitializer));
 
             services.ConfigureSwagger();
 
             services.AddMemoryCache();
             services.ConfigureModelStateHandler();
-
+            
+            // hangfire is used for background tasks.
+            services.ConfigureHangFire(Configuration);
+            
             services.AddControllers().AddNewtonsoftJson(op =>
                 op.SerializerSettings.ReferenceLoopHandling =
                     ReferenceLoopHandling.Ignore);
@@ -83,6 +89,9 @@ namespace ServerSightAPI
 
             app.UseAuthentication();
             app.UseAuthorization();
+            
+            app.UseHangfireServer();
+            app.UseHangfireDashboard("/hangfire-jobs");
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }

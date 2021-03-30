@@ -10,6 +10,9 @@ namespace ServerSightAPI.Controllers
 {
     public class ServerUtilController
     {
+        /*
+         * Extracts user from X-Api-Key (needs to be valid) and get the server.
+         */
         public static async Task<Server> GetUserHisServerFromApiKey(Guid serverId, HttpContext httpContext)
         {
             if (httpContext.Request.Headers.TryGetValue("X-Api-Key", out var apiKey))
@@ -27,7 +30,9 @@ namespace ServerSightAPI.Controllers
 
             return null;
         }
-        
+        /*
+         * Extracts user and retrieves the server from the user (if they are the owner)
+         */
         public static async Task<Server> GetServerFromJwt(Guid serverId, HttpContext httpContext)
         {
             var userManager =

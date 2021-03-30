@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
+using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -41,7 +42,7 @@ namespace ServerSightAPI.Controllers
 
             var ramUsages = await _unitOfWork.RAMUsages.GetAll(
                 q => q.ServerId == server.Id 
-                     && createdBetween.From >= server.CreatedAt && createdBetween.To <= server.CreatedAt
+                     && createdBetween.From >= q.CreatedAt && createdBetween.To <= q.CreatedAt
             );
 
             return _mapper.Map<IList<RamUsageDto>>(ramUsages);
@@ -54,6 +55,7 @@ namespace ServerSightAPI.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> SaveRamUsageMinuteOfServer(Guid serverId, [FromBody] CreateRamUsageDto ramUsageDto)
         {
+            // TODO check if not something was already posted in the past minute
             var server = await ServerUtilController.GetUserHisServerFromApiKey(serverId, HttpContext);
 
             var ramUsage = _mapper.Map<RamUsage>(ramUsageDto);
