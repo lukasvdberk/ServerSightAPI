@@ -47,6 +47,9 @@ namespace ServerSightAPI.Configurations
             
             CreateMap<RamUsage, RamUsageDto>().ReverseMap();
             CreateMap<RamUsageDto, RamUsage>().ReverseMap();
+            
+            CreateMap<CpuUsageServer, CpuUsageDto>().ReverseMap();
+            CreateMap<CpuUsageDto, CpuUsageServer>().ReverseMap();
         }
     }
 }

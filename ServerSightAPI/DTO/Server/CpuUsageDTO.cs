@@ -7,5 +7,6 @@ namespace ServerSightAPI.DTO.Server
     {
         [Required]
         public double AverageCpuUsagePastMinute { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 }
