@@ -44,7 +44,17 @@ namespace ServerSightAPI.Controllers
                 q => q.ServerId == server.Id 
                      && createdBetween.From >= q.CreatedAt && createdBetween.To <= q.CreatedAt
             );
-
+            
+            // TODO refactor (or on unit of work layer)
+            // year 1 is the default which means the user dit not provide a year.
+            if (createdBetween.From.Year != 1 && createdBetween.From.Year != 1)
+            {
+                ramUsages = await _unitOfWork.RAMUsages.GetAll(
+                    q => 
+                        server.Id == q.ServerId &&
+                        q.CreatedAt >= createdBetween.From && q.CreatedAt <= createdBetween.To
+                );
+            }
             return _mapper.Map<IList<RamUsageDto>>(ramUsages);
         }
         
