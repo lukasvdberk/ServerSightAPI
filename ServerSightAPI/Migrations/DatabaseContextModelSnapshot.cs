@@ -340,6 +340,29 @@ namespace ServerSightAPI.Migrations
                     b.ToTable("Servers");
                 });
 
+            modelBuilder.Entity("ServerSightAPI.Models.Server.ServerEvent", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("EventType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ServerId")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ServerId");
+
+                    b.ToTable("ServerEvents");
+                });
+
             modelBuilder.Entity("ServerSightAPI.Models.User", b =>
                 {
                     b.Property<string>("Id")
@@ -525,6 +548,15 @@ namespace ServerSightAPI.Migrations
                         .HasForeignKey("OwnedById");
 
                     b.Navigation("OwnedBy");
+                });
+
+            modelBuilder.Entity("ServerSightAPI.Models.Server.ServerEvent", b =>
+                {
+                    b.HasOne("ServerSightAPI.Models.Server.Server", "Server")
+                        .WithMany()
+                        .HasForeignKey("ServerId");
+
+                    b.Navigation("Server");
                 });
 #pragma warning restore 612, 618
         }

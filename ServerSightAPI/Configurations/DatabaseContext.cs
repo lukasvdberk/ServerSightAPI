@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ServerSightAPI.Models;
@@ -19,8 +20,16 @@ namespace ServerSightAPI.Configurations
         private DbSet<CpuUsageServer> CpuUsageServers { get; set; }
         private DbSet<RamUsage> RamUsages { get; set; }
         private DbSet<NetworkUsage> NetworkUsage { get; set; }
+        private DbSet<ServerEvent> ServerEvents { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder
+                .Entity<ServerEvent>()
+                .Property(e => e.EventType)
+                .HasConversion(
+                    v => v.ToString(),
+                    v => (EventType)Enum.Parse(typeof(EventType), v));
             base.OnModelCreating(modelBuilder);
         }
     }
