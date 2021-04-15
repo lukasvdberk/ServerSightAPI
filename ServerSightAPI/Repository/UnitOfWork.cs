@@ -11,6 +11,7 @@ namespace ServerSightAPI.Repository
         private IGenericRepository<ApiKey> _apiKeys;
         private IGenericRepository<HardDiskServer> _hardDiskServer;
         private IGenericRepository<NetworkAdapterServer> _networkAdapterServer;
+        private IGenericRepository<NetworkUsage> _networkUsage;
         private IGenericRepository<PortServer> _portServers;
         private IGenericRepository<CpuUsageServer> _cpuUsages;
         private IGenericRepository<RamUsage> _ramUsages;
@@ -27,6 +28,11 @@ namespace ServerSightAPI.Repository
 
         public IGenericRepository<NetworkAdapterServer> NetworkAdaptersServer =>
             _networkAdapterServer ??= new GenericRepository<NetworkAdapterServer>(_context);
+
+        public IGenericRepository<NetworkUsage> NetworkUsages =>
+            _networkUsage ??= new GenericRepository<NetworkUsage>(_context);
+        
+
 
         public IGenericRepository<HardDiskServer> HardDisksServers =>
             _hardDiskServer ??= new GenericRepository<HardDiskServer>(_context);

@@ -57,6 +57,16 @@ namespace ServerSightAPI.Controllers
 
             if (searchServerDto.PowerStatus != null)
                 servers = servers.Where(s => s.PowerStatus == searchServerDto.PowerStatus).ToList();
+            if (!string.IsNullOrWhiteSpace(searchServerDto.Ip))
+            {
+                var networkAdapterServers = await _unitOfWork.NetworkAdaptersServer.GetAll(q =>
+                    q.Ip == searchServerDto.Ip
+                );
+                servers = servers.Where(
+                    s => 
+                        networkAdapterServers.Any(n => n.ServerId == s.Id)
+                ).ToList();
+            }
 
             var serversMapped = _mapper.Map<IList<ServerDto>>(servers);
 

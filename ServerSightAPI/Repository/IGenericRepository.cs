@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using ServerSightAPI.DTO;
 
 namespace ServerSightAPI.Repository
 {
@@ -10,6 +11,12 @@ namespace ServerSightAPI.Repository
     {
         Task<IList<T>> GetAll(
             Expression<Func<T, bool>> expression = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
+            List<string> includes = null
+        );
+        
+        Task<IList<T>> CreatedBetween(
+            CreatedBetween createdBetween = null,
             Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
             List<string> includes = null
         );
