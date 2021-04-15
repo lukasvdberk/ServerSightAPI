@@ -349,6 +349,9 @@ namespace ServerSightAPI.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
                     b.Property<string>("EventType")
                         .IsRequired()
                         .HasColumnType("text");

@@ -8,6 +8,7 @@ namespace ServerSightAPI.Models.Server
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string Id { get; set; }
 
+        public string Description { get; set; }
         public EventType EventType { get; set; }
         
         [Column(TypeName = "timestamp")] 

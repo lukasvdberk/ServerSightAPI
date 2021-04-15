@@ -43,6 +43,7 @@ namespace ServerSightAPI.Background
                 // if no new cpu usage or ram usage was posted in the pas minute that means the server is off.
                 if (cpuUsages.Count == 0 || ramUsages.Count == 0)
                 {
+                    await LogServerIsTurnedOff(server);
                     server.PowerStatus = false;
                 }
                 else
@@ -53,5 +54,17 @@ namespace ServerSightAPI.Background
                 _unitOfWork.Servers.Update(server);
             }
         }
+
+        private async Task LogServerIsTurnedOff(Server server)
+        {
+            var serverPowerEvent = new ServerEvent();
+            serverPowerEvent.CreatedAt = DateTime.Now;
+            serverPowerEvent.EventType = EventType.PowerStatus;
+            serverPowerEvent.Description = "Server has shutdown";
+            serverPowerEvent.ServerId = server.Id;
+            await _unitOfWork.ServerEvents.Insert(serverPowerEvent);
+        }
+
     }
+    
 }

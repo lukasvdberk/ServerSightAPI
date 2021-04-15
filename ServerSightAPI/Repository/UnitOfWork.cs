@@ -16,6 +16,7 @@ namespace ServerSightAPI.Repository
         private IGenericRepository<CpuUsageServer> _cpuUsages;
         private IGenericRepository<RamUsage> _ramUsages;
         private IGenericRepository<Server> _server;
+        private IGenericRepository<ServerEvent> _serverEvents;
 
         public UnitOfWork(DatabaseContext context)
         {
@@ -45,6 +46,9 @@ namespace ServerSightAPI.Repository
 
         public IGenericRepository<RamUsage> RAMUsages =>
             _ramUsages ??= new GenericRepository<RamUsage>(_context);
+
+        public IGenericRepository<ServerEvent> ServerEvents =>
+            _serverEvents ??= new GenericRepository<ServerEvent>(_context);
 
 
         public void Dispose()

@@ -15,6 +15,8 @@ namespace ServerSightAPI.Repository
         IGenericRepository<PortServer> PortsServer { get; }
         IGenericRepository<CpuUsageServer> CpuUsagesServers { get; }
         IGenericRepository<RamUsage> RAMUsages { get; }
+        IGenericRepository<ServerEvent> ServerEvents { get; }
+
         
 
     }
