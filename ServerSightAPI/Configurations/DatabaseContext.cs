@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ServerSightAPI.Models;
@@ -24,12 +25,20 @@ namespace ServerSightAPI.Configurations
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // for enum support with server event
             modelBuilder
                 .Entity<ServerEvent>()
                 .Property(e => e.EventType)
                 .HasConversion(
                     v => v.ToString(),
                     v => (EventType)Enum.Parse(typeof(EventType), v));
+            // delete all models on cascade
+            foreach (var foreignKey in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
+            {
+                foreignKey.DeleteBehavior = DeleteBehavior.Cascade;
+            }
+
+            
             base.OnModelCreating(modelBuilder);
         }
     }

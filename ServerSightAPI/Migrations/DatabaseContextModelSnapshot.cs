@@ -485,7 +485,8 @@ namespace ServerSightAPI.Migrations
                 {
                     b.HasOne("ServerSightAPI.Models.User", "OwnedBy")
                         .WithMany()
-                        .HasForeignKey("OwnedById");
+                        .HasForeignKey("OwnedById")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("OwnedBy");
                 });
@@ -494,7 +495,8 @@ namespace ServerSightAPI.Migrations
                 {
                     b.HasOne("ServerSightAPI.Models.Server.Server", "Server")
                         .WithMany()
-                        .HasForeignKey("ServerId");
+                        .HasForeignKey("ServerId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Server");
                 });
@@ -503,7 +505,8 @@ namespace ServerSightAPI.Migrations
                 {
                     b.HasOne("ServerSightAPI.Models.Server.Server", "Server")
                         .WithMany()
-                        .HasForeignKey("ServerId");
+                        .HasForeignKey("ServerId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Server");
                 });
@@ -512,7 +515,8 @@ namespace ServerSightAPI.Migrations
                 {
                     b.HasOne("ServerSightAPI.Models.Server.Server", "Server")
                         .WithMany()
-                        .HasForeignKey("ServerId");
+                        .HasForeignKey("ServerId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Server");
                 });
@@ -521,7 +525,8 @@ namespace ServerSightAPI.Migrations
                 {
                     b.HasOne("ServerSightAPI.Models.Server.Server", "Server")
                         .WithMany()
-                        .HasForeignKey("ServerId");
+                        .HasForeignKey("ServerId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Server");
                 });
@@ -530,7 +535,8 @@ namespace ServerSightAPI.Migrations
                 {
                     b.HasOne("ServerSightAPI.Models.Server.Server", "Server")
                         .WithMany()
-                        .HasForeignKey("ServerId");
+                        .HasForeignKey("ServerId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Server");
                 });
@@ -539,7 +545,8 @@ namespace ServerSightAPI.Migrations
                 {
                     b.HasOne("ServerSightAPI.Models.Server.Server", "Server")
                         .WithMany()
-                        .HasForeignKey("ServerId");
+                        .HasForeignKey("ServerId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Server");
                 });
@@ -548,7 +555,8 @@ namespace ServerSightAPI.Migrations
                 {
                     b.HasOne("ServerSightAPI.Models.User", "OwnedBy")
                         .WithMany()
-                        .HasForeignKey("OwnedById");
+                        .HasForeignKey("OwnedById")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("OwnedBy");
                 });
@@ -557,7 +565,8 @@ namespace ServerSightAPI.Migrations
                 {
                     b.HasOne("ServerSightAPI.Models.Server.Server", "Server")
                         .WithMany()
-                        .HasForeignKey("ServerId");
+                        .HasForeignKey("ServerId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Server");
                 });
