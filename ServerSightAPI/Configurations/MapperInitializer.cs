@@ -5,6 +5,7 @@ using ServerSightAPI.DTO.Server.HardDiskServer;
 using ServerSightAPI.DTO.Server.NetworkAdapterServer;
 using ServerSightAPI.DTO.Server.NetworkUsage;
 using ServerSightAPI.DTO.Server.PortServer;
+using ServerSightAPI.DTO.Server.ServerEvents;
 using ServerSightAPI.DTO.User;
 using ServerSightAPI.Models;
 using ServerSightAPI.Models.Server;
@@ -57,6 +58,9 @@ namespace ServerSightAPI.Configurations
             
             CreateMap<CreateNetworkUsageDto, NetworkUsage>().ReverseMap();
             CreateMap<NetworkUsage, CreateNetworkUsageDto>().ReverseMap();
+            
+            CreateMap<ServerEvent, ServerEventDto>().ReverseMap();
+            CreateMap<ServerEventDto, ServerEvent>().ReverseMap();
         }
     }
 }
