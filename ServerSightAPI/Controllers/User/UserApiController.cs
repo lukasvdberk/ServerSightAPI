@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -39,11 +40,11 @@ namespace ServerSightAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ApiKeyDto> GetApiKey()
+        public async Task<IList<ApiKeyDto>> GetApiKey()
         {
             var user = await GetUser();
-            var apiKey = await _unitOfWork.ApiKeys.Get(q => q.OwnedById == user.Id);
-            return _mapper.Map<ApiKeyDto>(apiKey);
+            var apiKey = await _unitOfWork.ApiKeys.GetAll(q => q.OwnedById == user.Id);
+            return _mapper.Map<IList<ApiKeyDto>>(apiKey);
         }
 
 
@@ -52,16 +53,18 @@ namespace ServerSightAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> DeleteApiKey()
+        public async Task<IActionResult> DeleteApiKey([FromBody] ApiKeyDto apiKeyDto)
         {
             var user = await GetUser();
-            var apiKey = await _unitOfWork.ApiKeys.Get(q => q.OwnedById == user.Id);
+            var apiKey = await _unitOfWork.ApiKeys.Get(
+                q => q.OwnedById == user.Id && apiKeyDto.Key == q.Key
+            );
 
             await _unitOfWork.ApiKeys.Delete(apiKey.Id);
             return Ok();
         }
 
-        [HttpPut]
+        [HttpPost]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -69,11 +72,6 @@ namespace ServerSightAPI.Controllers
         public async Task<IActionResult> CreateApiKey()
         {
             var user = await GetUser();
-            var userAlreadyHasKey = await _unitOfWork.ApiKeys.Get(q => q.OwnedById == user.Id) != null;
-            if (userAlreadyHasKey)
-                return BadRequest(
-                    "User already has an api key. Delete the previous one then you can create a new one.");
-
             var apiKey = new ApiKey();
             var generatedKey = GenerateKey();
 
