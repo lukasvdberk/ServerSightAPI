@@ -1,3 +1,4 @@
+using System.Net;
 using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -50,7 +51,12 @@ namespace ServerSightAPI
 
             services.AddMemoryCache();
             services.ConfigureModelStateHandler();
-            
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.KnownProxies.Add(IPAddress.Parse("192.168.2.198"));
+                options.KnownProxies.Add(IPAddress.Parse("192.168.2.86"));
+                options.KnownProxies.Add(IPAddress.Parse("0.0.0.0"));
+            });
             // hangfire is used for background tasks.
             services.ConfigureHangFire(Configuration);
             
