@@ -44,6 +44,7 @@ namespace ServerSightAPI.Controllers
         {
             var user = await GetUser();
             var apiKey = await _unitOfWork.ApiKeys.GetAll(q => q.OwnedById == user.Id);
+            
             return _mapper.Map<IList<ApiKeyDto>>(apiKey);
         }
 
@@ -61,6 +62,8 @@ namespace ServerSightAPI.Controllers
             );
 
             await _unitOfWork.ApiKeys.Delete(apiKey.Id);
+            
+            _logger.LogInformation($@"api key deleted for user-email {user.Email}");
             return Ok();
         }
 
@@ -83,6 +86,8 @@ namespace ServerSightAPI.Controllers
             apiKey.OwnedById = user.Id;
 
             await _unitOfWork.ApiKeys.Insert(apiKey);
+            
+            _logger.LogInformation($@"api key generated for user-email {user.Email}");
             return Ok(_mapper.Map<ApiKeyDto>(apiKey));
         }
 
