@@ -17,6 +17,8 @@ namespace ServerSightAPI.Repository
         private IGenericRepository<RamUsage> _ramUsages;
         private IGenericRepository<Server> _server;
         private IGenericRepository<ServerEvent> _serverEvents;
+        private IGenericRepository<FirebaseDevice> _firebaseDevices;
+
 
         public UnitOfWork(DatabaseContext context)
         {
@@ -49,6 +51,9 @@ namespace ServerSightAPI.Repository
 
         public IGenericRepository<ServerEvent> ServerEvents =>
             _serverEvents ??= new GenericRepository<ServerEvent>(_context);
+
+        public IGenericRepository<FirebaseDevice> FirebaseDevices =>
+            _firebaseDevices ??= new GenericRepository<FirebaseDevice>(_context);
 
 
         public void Dispose()

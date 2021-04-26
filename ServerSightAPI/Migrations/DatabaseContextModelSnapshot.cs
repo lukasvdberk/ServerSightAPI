@@ -171,6 +171,25 @@ namespace ServerSightAPI.Migrations
                     b.ToTable("ApiKeys");
                 });
 
+            modelBuilder.Entity("ServerSightAPI.Models.FirebaseDevice", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("text");
+
+                    b.Property<string>("DeviceKey")
+                        .HasColumnType("text");
+
+                    b.Property<string>("OwnedById")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OwnedById");
+
+                    b.ToTable("FirebaseDevices");
+                });
+
             modelBuilder.Entity("ServerSightAPI.Models.Server.CpuUsageServer", b =>
                 {
                     b.Property<string>("Id")
@@ -482,6 +501,16 @@ namespace ServerSightAPI.Migrations
                 });
 
             modelBuilder.Entity("ServerSightAPI.Models.ApiKey", b =>
+                {
+                    b.HasOne("ServerSightAPI.Models.User", "OwnedBy")
+                        .WithMany()
+                        .HasForeignKey("OwnedById")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("OwnedBy");
+                });
+
+            modelBuilder.Entity("ServerSightAPI.Models.FirebaseDevice", b =>
                 {
                     b.HasOne("ServerSightAPI.Models.User", "OwnedBy")
                         .WithMany()
