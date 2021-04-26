@@ -13,6 +13,10 @@ using ServerSightAPI.Repository;
 
 namespace ServerSightAPI.Controllers
 {
+    /**
+     * For registering firebase devices.
+     * This is currently used to for push notifications.
+     */
     public class FirebaseDeviceController : ControllerBase
     {
         private readonly ILogger<UserApiController> _logger;
