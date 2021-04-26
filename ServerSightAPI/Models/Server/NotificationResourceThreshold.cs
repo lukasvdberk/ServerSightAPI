@@ -14,8 +14,8 @@ namespace ServerSightAPI.Models.Server
         public int CpuUsageThresholdInPercentage { get; set; }
         public int HardDiskUsageThresholdInPercentage { get; set; }
         
-        [ForeignKey(nameof(User))] public string OwnedById { get; set; }
+        [ForeignKey(nameof(Server))] public string ServerId { get; set; }
 
-        public User OwnedBy { get; set; }
+        public Server Server { get; set; }
     }
 }

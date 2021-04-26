@@ -18,6 +18,7 @@ namespace ServerSightAPI.Repository
         private IGenericRepository<Server> _server;
         private IGenericRepository<ServerEvent> _serverEvents;
         private IGenericRepository<FirebaseDevice> _firebaseDevices;
+        private IGenericRepository<NotificationResourceThreshold> _notificationTresholds;
 
 
         public UnitOfWork(DatabaseContext context)
@@ -54,6 +55,9 @@ namespace ServerSightAPI.Repository
 
         public IGenericRepository<FirebaseDevice> FirebaseDevices =>
             _firebaseDevices ??= new GenericRepository<FirebaseDevice>(_context);
+
+        public IGenericRepository<NotificationResourceThreshold> NotificationThresholds => _notificationTresholds ??=
+            new GenericRepository<NotificationResourceThreshold>(_context);
 
 
         public void Dispose()

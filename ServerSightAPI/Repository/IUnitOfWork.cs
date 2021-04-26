@@ -17,6 +17,7 @@ namespace ServerSightAPI.Repository
         IGenericRepository<RamUsage> RAMUsages { get; }
         IGenericRepository<ServerEvent> ServerEvents { get; }
         IGenericRepository<FirebaseDevice> FirebaseDevices { get; }
+        IGenericRepository<NotificationResourceThreshold> NotificationThresholds { get; }
 
         
 
