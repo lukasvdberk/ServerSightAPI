@@ -61,6 +61,9 @@ namespace ServerSightAPI.Configurations
             
             CreateMap<ServerEvent, ServerEventDto>().ReverseMap();
             CreateMap<ServerEventDto, ServerEvent>().ReverseMap();
+            
+            CreateMap<CreateFirebaseDTO, FirebaseDevice>().ReverseMap();
+            CreateMap<FirebaseDevice, CreateFirebaseDTO>().ReverseMap();
         }
     }
 }

@@ -17,6 +17,8 @@ namespace ServerSightAPI.Controllers
      * For registering firebase devices.
      * This is currently used to for push notifications.
      */
+    [ApiController]
+    [Route("api/user/firebase-devices")]
     public class FirebaseDeviceController : ControllerBase
     {
         private readonly ILogger<UserApiController> _logger;
