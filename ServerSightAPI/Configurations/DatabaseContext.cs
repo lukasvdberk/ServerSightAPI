@@ -23,6 +23,7 @@ namespace ServerSightAPI.Configurations
         private DbSet<NetworkUsage> NetworkUsage { get; set; }
         private DbSet<ServerEvent> ServerEvents { get; set; }
         private DbSet<FirebaseDevice> FirebaseDevices { get; set; }
+        private DbSet<NotificationResourceThreshold> NotificationTreshold { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

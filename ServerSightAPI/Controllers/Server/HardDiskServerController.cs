@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.Internal;
+using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ServerSightAPI.DTO.Server.HardDiskServer;
+using ServerSightAPI.EventLoggers;
 using ServerSightAPI.Middleware;
 using ServerSightAPI.Models;
 using ServerSightAPI.Models.Server;
@@ -23,17 +25,23 @@ namespace ServerSightAPI.Controllers
         private readonly ILogger<HardDiskServerController> _logger;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IBackgroundJobClient _backgroundJobClient;
+        private readonly IBaseServerEventLogger _baseServerEventLogger;
 
         public HardDiskServerController(
             ILogger<HardDiskServerController> logger,
             UserManager<User> userManager,
             IMapper mapper,
-            IUnitOfWork unitOfWork
+            IUnitOfWork unitOfWork,
+            IBackgroundJobClient backgroundJobClient,
+            IBaseServerEventLogger baseServerEventLogger
         )
         {
             _logger = logger;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _backgroundJobClient = backgroundJobClient;
+            _baseServerEventLogger = baseServerEventLogger;
         }
 
         [HttpGet]
@@ -73,6 +81,8 @@ namespace ServerSightAPI.Controllers
             // so we overwrite the existing.
             await RemoveExistingHardDisksOfServer(serverId.ToString());
             await _unitOfWork.HardDisksServers.InsertRange(hardDiskServers);
+            
+            await HardDiskEventChecker(server, hardDiskServers);
             return NoContent();
         }
 
@@ -84,6 +94,27 @@ namespace ServerSightAPI.Controllers
             );
 
             _unitOfWork.HardDisksServers.DeleteRange(existingHardDisks);
+        }
+        
+        /**
+         * Check whether a event for the hard disk resource should be fired.
+         * If a hard disk meets the criteria for a event it will throw it in this method.
+         */
+        private async Task HardDiskEventChecker(Server server, IList<HardDiskServer> hardDisksServer)
+        {
+            var notificationThreshold = await _unitOfWork.NotificationThresholds.Get(
+                q => q.ServerId == server.Id);
+
+            foreach (var hardDiskServer in hardDisksServer)
+            {
+                var usageInPercentage = (hardDiskServer.SpaceAvailable / hardDiskServer.SpaceTotal) * 100;
+
+                if (usageInPercentage >= notificationThreshold.HardDiskUsageThresholdInPercentage)
+                {
+                    HardDiskEventLogger.LogThresholdReached(server, hardDiskServer, _baseServerEventLogger);
+                }
+            }
+
         }
     }
 }

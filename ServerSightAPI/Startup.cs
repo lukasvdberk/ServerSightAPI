@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using ServerSightAPI.Background;
 using ServerSightAPI.Configurations;
 using ServerSightAPI.Configurations.Services;
+using ServerSightAPI.EventLoggers;
 using ServerSightAPI.Repository;
 using ServerSightAPI.Services;
 
@@ -40,7 +41,9 @@ namespace ServerSightAPI
 
             services.ConfigureJwt(Configuration);
 
-            // provides an instances when the application aks one to inject
+            // provides an instances when the application ask one to inject
+            services.AddTransient<IBaseServerEventLogger, BaseServerEventLogger>();
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IAuthManager, AuthManager>();
             services.AddScoped<IServerPowerStatusSetter, ServerPowerStatusSetter>();
@@ -51,6 +54,8 @@ namespace ServerSightAPI
 
             services.AddMemoryCache();
             services.ConfigureModelStateHandler();
+            services.ConfigureFirebase(Configuration);
+            
             services.Configure<ForwardedHeadersOptions>(options =>
             {
                 options.KnownProxies.Add(IPAddress.Parse("192.168.2.198"));

@@ -64,6 +64,9 @@ namespace ServerSightAPI.Configurations
             
             CreateMap<CreateFirebaseDTO, FirebaseDevice>().ReverseMap();
             CreateMap<FirebaseDevice, CreateFirebaseDTO>().ReverseMap();
+            
+            CreateMap<NotificationResourceThreshold, NotificationResourceThresholdDTO>().ReverseMap();
+            CreateMap<NotificationResourceThresholdDTO, NotificationResourceThreshold>().ReverseMap();
         }
     }
 }

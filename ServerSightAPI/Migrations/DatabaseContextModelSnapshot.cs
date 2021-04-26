@@ -284,6 +284,31 @@ namespace ServerSightAPI.Migrations
                     b.ToTable("NetworkUsage");
                 });
 
+            modelBuilder.Entity("ServerSightAPI.Models.Server.NotificationResourceThreshold", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("text");
+
+                    b.Property<int>("CpuUsageThresholdInPercentage")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("HardDiskUsageThresholdInPercentage")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("RamUsageThresholdInPercentage")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ServerId")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ServerId");
+
+                    b.ToTable("NotificationTreshold");
+                });
+
             modelBuilder.Entity("ServerSightAPI.Models.Server.PortServer", b =>
                 {
                     b.Property<string>("Id")
@@ -551,6 +576,16 @@ namespace ServerSightAPI.Migrations
                 });
 
             modelBuilder.Entity("ServerSightAPI.Models.Server.NetworkUsage", b =>
+                {
+                    b.HasOne("ServerSightAPI.Models.Server.Server", "Server")
+                        .WithMany()
+                        .HasForeignKey("ServerId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Server");
+                });
+
+            modelBuilder.Entity("ServerSightAPI.Models.Server.NotificationResourceThreshold", b =>
                 {
                     b.HasOne("ServerSightAPI.Models.Server.Server", "Server")
                         .WithMany()
