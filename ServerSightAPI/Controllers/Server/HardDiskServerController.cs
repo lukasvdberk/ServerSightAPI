@@ -108,7 +108,7 @@ namespace ServerSightAPI.Controllers
 
             foreach (var hardDiskServer in hardDisksServer)
             {
-                var usageInPercentage = (hardDiskServer.SpaceAvailable / hardDiskServer.SpaceTotal) * 100;
+                var usageInPercentage = HardDiskUsageInPercentage(hardDiskServer);
 
                 if (usageInPercentage >= notificationThreshold.HardDiskUsageThresholdInPercentage)
                 {
