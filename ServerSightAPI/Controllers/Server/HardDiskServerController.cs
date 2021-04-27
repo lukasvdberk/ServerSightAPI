@@ -109,7 +109,12 @@ namespace ServerSightAPI.Controllers
             foreach (var hardDiskServer in hardDisksServer)
             {
                 var usageInPercentage = HardDiskUsageInPercentage(hardDiskServer);
-
+                
+                // dont include virtual disks like /snap
+                if (IsHardDiskVirtualHardDisk(hardDiskServer))
+                {
+                    continue;
+                }
                 if (usageInPercentage >= notificationThreshold.HardDiskUsageThresholdInPercentage)
                 {
                     await HardDiskEventLogger.LogThresholdReached(server, hardDiskServer, _baseServerEventLogger);
@@ -121,6 +126,11 @@ namespace ServerSightAPI.Controllers
         public static double HardDiskUsageInPercentage(HardDiskServer hardDiskServer)
         {
             return ((hardDiskServer.SpaceTotal - hardDiskServer.SpaceAvailable) / hardDiskServer.SpaceTotal) * 100;
+        }
+
+        private bool IsHardDiskVirtualHardDisk(HardDiskServer hardDiskServer)
+        {
+            return hardDiskServer.DiskName.StartsWith("/snap");
         }
     }
 }
