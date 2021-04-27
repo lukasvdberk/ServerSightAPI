@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ServerSightAPI.DTO;
 using ServerSightAPI.DTO.Server;
+using ServerSightAPI.EventLoggers;
 using ServerSightAPI.Middleware;
 using ServerSightAPI.Models.Server;
 using ServerSightAPI.Repository;
@@ -21,14 +22,17 @@ namespace ServerSightAPI.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IBaseServerEventLogger _baseServerEventLogger;
 
         public RamUsageController(
             IMapper mapper,
-            IUnitOfWork unitOfWork
+            IUnitOfWork unitOfWork,
+            IBaseServerEventLogger baseServerEventLogger
         )
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _baseServerEventLogger = baseServerEventLogger;
         }
         
         [HttpGet]
@@ -74,7 +78,28 @@ namespace ServerSightAPI.Controllers
             
             await _unitOfWork.RAMUsages.Insert(ramUsage);
 
+            ramUsage.Server = server;
+            await RAMEventLoggerChecker(ramUsage);
+            
             return Ok();
+        }
+        
+        private async Task RAMEventLoggerChecker(RamUsage ramUsage)
+        {
+            var notificationThreshold = await _unitOfWork.NotificationThresholds.Get(
+                q => q.ServerId == ramUsage.ServerId
+            );
+            
+            if(notificationThreshold == null) {return;}
+            if (GetRAMUsageInPercent(ramUsage) >= notificationThreshold.RamUsageThresholdInPercentage)
+            {
+                await RAMServerEventLogger.LogThresholdReached(ramUsage, _baseServerEventLogger);
+            }
+        }
+
+        public static double GetRAMUsageInPercent(RamUsage ramUsage)
+        {
+            return (ramUsage.TotalAvailableInBytes - ramUsage.UsageInBytes) * 100;
         }
     }
 }
