@@ -6,8 +6,9 @@ namespace ServerSightAPI.EventLoggers
 {
     public class CPUServerEventLogger
     {
-        public static async Task LogThresholdReached(Server server, CpuUsageServer cpuUsageServer, IBaseServerEventLogger serverEventLogger)
+        public static async Task LogThresholdReached(CpuUsageServer cpuUsageServer, IBaseServerEventLogger serverEventLogger)
         {
+            var server = cpuUsageServer.Server;
             var usageInPercentage = cpuUsageServer.AverageCpuUsagePastMinute.ToString ("#.#");
 
             await serverEventLogger.LogEvent(

@@ -104,6 +104,7 @@ namespace ServerSightAPI.Controllers
         {
             var notificationThreshold = await _unitOfWork.NotificationThresholds.Get(
                 q => q.ServerId == server.Id);
+            if(notificationThreshold == null) {return;}
 
             foreach (var hardDiskServer in hardDisksServer)
             {

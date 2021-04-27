@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using ServerSightAPI.Background;
 using ServerSightAPI.DTO;
 using ServerSightAPI.DTO.Server;
+using ServerSightAPI.EventLoggers;
 using ServerSightAPI.Middleware;
 using ServerSightAPI.Models;
 using ServerSightAPI.Models.Server;
@@ -25,16 +26,19 @@ namespace ServerSightAPI.Controllers
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IBackgroundJobClient _backgroundJobClient;
-        
+        private readonly IBaseServerEventLogger _baseServerEventLogger;
+
         public CpuUsageServerController(
             IMapper mapper,
             IUnitOfWork unitOfWork,
-            IBackgroundJobClient backgroundJobClient
+            IBackgroundJobClient backgroundJobClient,
+            IBaseServerEventLogger baseServerEventLogger
         )
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _backgroundJobClient = backgroundJobClient;
+            _baseServerEventLogger = baseServerEventLogger;
         }
         
         [HttpGet]
@@ -64,7 +68,7 @@ namespace ServerSightAPI.Controllers
         
         [HttpPost]
         [ApiKeyAuthorization]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> SaveCpuUsageMinuteOfServer(Guid serverId, [FromBody] CpuUsageDto cpuUsageDto)
@@ -73,17 +77,36 @@ namespace ServerSightAPI.Controllers
             var server = await ServerUtilController.GetUserHisServerFromApiKey(serverId, HttpContext);
 
             var cpuUsage = _mapper.Map<CpuUsageServer>(cpuUsageDto);
+
             cpuUsage.ServerId = server.Id;
             cpuUsage.CreatedAt = DateTime.Now;
             
             await _unitOfWork.CpuUsagesServers.Insert(cpuUsage);
-            
-            // check if within a minute a new cpu usage was reported. It has 40 seconds to post
+
+            cpuUsage.Server = server;
+            // check if within a minute a new cpu usage was reported. It has 40 seconds to post.
+            // This check is to see if the server is offline or not
             _backgroundJobClient.Schedule<ServerPowerStatusSetter>(s => 
                     s.SetServerPowerStatus(server),
             new TimeSpan(0, 1, 40)
             );
-            return Ok();
+
+            await CPUEventLoggerChecker(cpuUsage);
+            
+            return NoContent();
+        }
+
+        private async Task CPUEventLoggerChecker(CpuUsageServer cpuUsage)
+        {
+            var notificationThreshold = await _unitOfWork.NotificationThresholds.Get(
+                q => q.ServerId == cpuUsage.ServerId
+            );
+            
+            if(notificationThreshold == null) {return;}
+            if (notificationThreshold.CpuUsageThresholdInPercentage <= cpuUsage.AverageCpuUsagePastMinute)
+            {
+                await CPUServerEventLogger.LogThresholdReached(cpuUsage, _baseServerEventLogger);
+            }
         }
     }
 }
