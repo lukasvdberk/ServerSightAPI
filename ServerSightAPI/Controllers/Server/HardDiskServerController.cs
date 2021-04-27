@@ -111,10 +111,15 @@ namespace ServerSightAPI.Controllers
 
                 if (usageInPercentage >= notificationThreshold.HardDiskUsageThresholdInPercentage)
                 {
-                    HardDiskEventLogger.LogThresholdReached(server, hardDiskServer, _baseServerEventLogger);
+                    await HardDiskEventLogger.LogThresholdReached(server, hardDiskServer, _baseServerEventLogger);
                 }
             }
 
+        }
+
+        public static double HardDiskUsageInPercentage(HardDiskServer hardDiskServer)
+        {
+            return ((hardDiskServer.SpaceTotal - hardDiskServer.SpaceAvailable) / hardDiskServer.SpaceTotal) * 100;
         }
     }
 }

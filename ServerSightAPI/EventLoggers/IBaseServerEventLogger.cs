@@ -5,6 +5,6 @@ namespace ServerSightAPI.EventLoggers
 {
     public interface IBaseServerEventLogger
     {
-        public Task LogEvent(string description, EventType eventType, Server server);
+        public Task LogEvent(string eventName, string description, EventType eventType, Server server);
     }
 }

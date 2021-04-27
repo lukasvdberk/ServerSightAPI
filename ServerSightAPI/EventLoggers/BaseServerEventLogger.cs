@@ -15,20 +15,19 @@ namespace ServerSightAPI.EventLoggers
         {
             _unitOfWork = unitOfWork;
         }
-        public async Task LogEvent(string description, EventType eventType, Server server)
+        public async Task LogEvent(string eventName,string description, EventType eventType, Server server)
         {
             await SaveServerEventInDatabase(description, eventType, server);
             
             // TODO set notification pushing in background
-            await SendPushNotificationsToClients(description, eventType, server);
+            await SendPushNotificationsToClients(eventName,description, eventType, server);
         }
 
-        private async Task SendPushNotificationsToClients(string description, EventType eventType, Server server)
+        private async Task SendPushNotificationsToClients(string title, string description, EventType eventType, Server server)
         {
             var devices =  await _unitOfWork.FirebaseDevices.GetAll(q => q.OwnedById == server.OwnedById);
 
-            string notificationTitle = eventType.GetDisplayName();
-            Notification.SendNotification(notificationTitle, description, devices);
+            await Notification.SendNotification(title, description, devices);
         }
         
         private  async Task SaveServerEventInDatabase(string description, EventType eventType, Server server)
