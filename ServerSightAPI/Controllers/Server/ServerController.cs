@@ -101,7 +101,9 @@ namespace ServerSightAPI.Controllers
 
             server.OwnedById = user.Id;
             await _unitOfWork.Servers.Insert(server);
-
+            // so that there is always a default configuration for notification thresholds
+            await SetDefaultServerNotifications(server);
+            
             return _mapper.Map<ServerDto>(server);
         }
 
@@ -164,10 +166,20 @@ namespace ServerSightAPI.Controllers
                 await serverImage.CopyToAsync(stream);
             }
 
-            server.ImagePath = "Images/" + serverImage.FileName;
-            ;
+            server.ImagePath = "Images/" + serverImage.FileName; ;
             _unitOfWork.Servers.Update(server);
             return Ok();
+        }
+
+        public async Task SetDefaultServerNotifications(Server server)
+        {
+            await _unitOfWork.NotificationThresholds.Insert(new NotificationResourceThreshold()
+            {
+                CpuUsageThresholdInPercentage = 80,
+                HardDiskUsageThresholdInPercentage = 80,
+                RamUsageThresholdInPercentage = 80,
+                ServerId = server.Id
+            });
         }
 
         private async Task<Server> GetUserHisServer(Guid serverId)
