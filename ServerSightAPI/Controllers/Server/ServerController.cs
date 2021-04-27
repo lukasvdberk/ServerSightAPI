@@ -171,7 +171,7 @@ namespace ServerSightAPI.Controllers
             return Ok();
         }
 
-        public async Task SetDefaultServerNotifications(Server server)
+        private async Task SetDefaultServerNotifications(Server server)
         {
             await _unitOfWork.NotificationThresholds.Insert(new NotificationResourceThreshold()
             {
