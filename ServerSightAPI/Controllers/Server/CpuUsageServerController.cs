@@ -88,7 +88,7 @@ namespace ServerSightAPI.Controllers
             // This check is to see if the server is offline or not
             _backgroundJobClient.Schedule<ServerPowerStatusSetter>(s => 
                     s.SetServerPowerStatus(server),
-            new TimeSpan(0, 1, 40)
+            new TimeSpan(0, 1, 10)
             );
 
             await CPUEventLoggerChecker(cpuUsage);
