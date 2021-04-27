@@ -1,5 +1,6 @@
 using System.Net;
 using Hangfire;
+using Hangfire.Dashboard;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -102,7 +103,10 @@ namespace ServerSightAPI
             app.UseAuthorization();
             
             app.UseHangfireServer();
-            app.UseHangfireDashboard("/hangfire-jobs");
+            app.UseHangfireDashboard("/hangfire-jobs", new DashboardOptions
+            {
+                IsReadOnlyFunc = (DashboardContext context) => true
+            });
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }

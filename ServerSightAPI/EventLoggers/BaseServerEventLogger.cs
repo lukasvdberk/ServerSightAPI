@@ -18,8 +18,6 @@ namespace ServerSightAPI.EventLoggers
         public async Task LogEvent(string eventName,string description, EventType eventType, Server server)
         {
             await SaveServerEventInDatabase(description, eventType, server);
-            
-            // TODO set notification pushing in background
             await SendPushNotificationsToClients(eventName,description, eventType, server);
         }
 

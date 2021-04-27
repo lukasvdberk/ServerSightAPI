@@ -14,8 +14,7 @@ using ServerSightAPI.Services;
 namespace ServerSightAPI.Controllers
 {
     [ApiController]
-    // TODO change to users/ with front-end
-    [Route("api/user/")]
+    [Route("api/users/")]
     public class UserController : ControllerBase
     {
         private readonly IAuthManager _authManager;
@@ -48,7 +47,6 @@ namespace ServerSightAPI.Controllers
 
             // email must be unique
             if (await _userManager.FindByEmailAsync(user.Email) != null)
-                // TODO do this in seperate function.
                 return BadRequest(new FieldErrors(
                     new List<FieldError>
                     {
@@ -61,7 +59,6 @@ namespace ServerSightAPI.Controllers
 
             if (!result.Succeeded)
             {
-                // TODO do this in seperate function.
                 var fieldErrs = new List<FieldError>();
                 foreach (var error in result.Errors) fieldErrs.Add(new FieldError(error.Code, error.Description));
                 return BadRequest(new FieldErrors(fieldErrs));

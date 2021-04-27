@@ -73,7 +73,6 @@ namespace ServerSightAPI.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> SaveCpuUsageMinuteOfServer(Guid serverId, [FromBody] CpuUsageDto cpuUsageDto)
         {
-            // TODO check if not something was already posted in the past minute
             var server = await ServerUtilController.GetUserHisServerFromApiKey(serverId, HttpContext);
 
             var cpuUsage = _mapper.Map<CpuUsageServer>(cpuUsageDto);

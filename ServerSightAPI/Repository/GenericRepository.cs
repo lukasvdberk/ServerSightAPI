@@ -45,25 +45,6 @@ namespace ServerSightAPI.Repository
             }
             return await query.AsNoTracking().ToListAsync();
         }
-        
-        /*
-         * The the T must have a property CreatedAt of type DateTime
-         */
-        public async Task<IList<T>> CreatedBetween(CreatedBetween createdBetween = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, List<string> includes = null)
-        {
-            IQueryable<T> query = _db;
-
-            if (createdBetween != null && createdBetween.From.Year != 1 && createdBetween.From.Year != 1)
-            {
-                // TODO createdAt types inherit from something.
-                // query = query.Where(
-                //     q => server.Id == q.ServerId &&
-                //     q.GetType().GetProperty("CreatedAt"). >= createdBetween.From && q.CreatedAt <= createdBetween.To
-                // );
-            }
-
-            return await query.AsNoTracking().ToListAsync();
-        }
 
         public async Task<T> Get(Expression<Func<T, bool>> expression, List<string> includes = null)
         {
