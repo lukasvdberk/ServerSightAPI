@@ -22,6 +22,7 @@ namespace ServerSightAPI.Models.Server
     public enum EventType
     {
         PowerStatus,
-        HardDiskThresholdReached
+        HardDiskThresholdReached,
+        CPUUsageThresholdReached,
     }
 }
