@@ -99,7 +99,7 @@ namespace ServerSightAPI.Controllers
 
         public static double GetRAMUsageInPercent(RamUsage ramUsage)
         {
-            return (ramUsage.TotalAvailableInBytes - ramUsage.UsageInBytes) * 100;
+            return ((ramUsage.TotalAvailableInBytes - ramUsage.UsageInBytes) / ramUsage.TotalAvailableInBytes) * 100;
         }
     }
 }

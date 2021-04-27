@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using ServerSightAPI.Controllers;
 using ServerSightAPI.Models.Server;
 
 namespace ServerSightAPI.EventLoggers
@@ -8,12 +9,12 @@ namespace ServerSightAPI.EventLoggers
         public static async Task LogThresholdReached(RamUsage ramUsage, IBaseServerEventLogger serverEventLogger)
         {
             var server = ramUsage.Server;
-            var usageInPercentage = ramUsage.UsageInBytes.ToString ("#.#");
+            var usageInPercentage = RamUsageController.GetRAMUsageInPercent(ramUsage).ToString ("#.#");
 
             await serverEventLogger.LogEvent(
-                $@"CPU threshold reached for {server.Name} server",
-                $@"{server.Name} server reached CPU usage threshold. Current CPU usage is {usageInPercentage}%", 
-                EventType.CPUUsageThresholdReached, 
+                $@"RAM threshold reached for {server.Name} server",
+                $@"{server.Name} server reached RAM usage threshold. Current RAM usage is {usageInPercentage}%", 
+                EventType.RAMUsageThresholdReached, 
                 server
             );
         }

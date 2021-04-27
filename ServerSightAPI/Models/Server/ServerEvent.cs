@@ -24,5 +24,6 @@ namespace ServerSightAPI.Models.Server
         PowerStatus,
         HardDiskThresholdReached,
         CPUUsageThresholdReached,
+        RAMUsageThresholdReached
     }
 }
