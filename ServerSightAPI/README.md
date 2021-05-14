@@ -11,7 +11,7 @@ The server sight backend written in .NET Core 5 as REST API.
   
 Then migrate your database with dotnet ef 
 ```bash
-database update First
+dotnet ef database update
 ```
 
 Start the application in your IDE or with 
