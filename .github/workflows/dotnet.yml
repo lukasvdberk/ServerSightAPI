@@ -1,13 +1,6 @@
-name: .NET
+name: .NET API Tets
 
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
-    types: 
-      - ready_for_review
-      - review_requested
+on: [push, pull_request]
 
 jobs:
   build:
