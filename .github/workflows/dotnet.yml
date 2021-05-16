@@ -1,4 +1,4 @@
-name: .NET API Tets
+name: .NET API Tests
 
 on: [push, pull_request]
 
