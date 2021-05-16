@@ -16,10 +16,8 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Copy config
-      run: echo $CONFIG_CONTENT >> ServerSightAPI/appsettings.json
-      shell: bash
-      env:
-        CONFIG_CONTENT : ${{secrets.ASP_API_CONFIG}}
+      run: echo ${{secrets.ASP_API_CONFIG}} >> ServerSightAPI/appsettings.json
+      shell: bash 
     - name: Create required directories
       run: mkdir ServerSightAPI/Resources/
     - name: Build
