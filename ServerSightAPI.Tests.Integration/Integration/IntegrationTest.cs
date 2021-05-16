@@ -7,21 +7,28 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Google.Apis.Util;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using ServerSightAPI.Configurations;
 using ServerSightAPI.DTO.User;
+using ServerSightAPI.Repository;
+using ServerSightAPI.Services;
 using ServerSightAPI.Tests.Integration.Integration.User;
+using Xunit.Sdk;
 
 namespace ServerSightAPI.Tests.Integration.Integration
 {
     public class IntegrationTest
     {
+        private string UserJWT = "";
         protected readonly HttpClient TestClient;
+        protected readonly WebApplicationFactory<Startup> Factory;
 
         public IntegrationTest()
         {
@@ -52,11 +59,12 @@ namespace ServerSightAPI.Tests.Integration.Integration
                 });
             
             TestClient = appFactory.CreateClient();
+            Factory = appFactory;
         }
         
         protected async Task AuthenticateAsync()
         {
-            TestClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await RegisterAndGetJwt());
+            TestClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", UserJWT);
         }
         
         private async Task<string> RegisterAndGetJwt()
@@ -79,6 +87,21 @@ namespace ServerSightAPI.Tests.Integration.Integration
             var authResponse = await loginResponse.Content.ReadAsAsync<AuthResponse>();
 
             return authResponse.Token;
+        }
+
+        public DatabaseContext GetDbContext()
+        {
+            var scopeFactory = Factory.Server.Host.Services.GetService<IServiceScopeFactory>();
+            try
+            {
+                using var scope = scopeFactory.CreateScope();
+                var context = scope.ServiceProvider.GetService<DatabaseContext>();
+                return context;
+            }
+            catch (NullException exception)
+            {
+                throw new Exception("Could not get instance of database");
+            }
         }
     }
 }
