@@ -35,23 +35,21 @@ namespace ServerSightAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IList<NetworkUsageDTO>> GetRamUsageOfServer(Guid serverId, [FromQuery] CreatedBetween createdBetween)
+        public async Task<IList<NetworkUsageDTO>> GetNetworkUsageOfServer(Guid serverId, [FromQuery] CreatedBetween createdBetween)
         {
             var server = await ServerUtilController.GetServerFromJwt(serverId, HttpContext);
-
+            
             var networkUsages = await _unitOfWork.NetworkUsages.GetAll(
                 q => q.ServerId == server.Id 
                      && createdBetween.From >= q.CreatedAt && createdBetween.To <= q.CreatedAt
             );
             
-            // TODO refactor (or on unit of work layer)
             // year 1 is the default which means the user dit not provide a year.
             if (createdBetween.From.Year != 1 && createdBetween.From.Year != 1)
             {
                 networkUsages = await _unitOfWork.NetworkUsages.GetAll(
                     q => 
-                        server.Id == q.ServerId &&
-                        q.CreatedAt >= createdBetween.From && q.CreatedAt <= createdBetween.To
+                        server.Id == q.ServerId
                 );
             }
             return _mapper.Map<IList<NetworkUsageDTO>>(networkUsages);
