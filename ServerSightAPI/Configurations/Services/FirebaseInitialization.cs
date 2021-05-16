@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using FirebaseAdmin;
@@ -17,10 +18,17 @@ namespace ServerSightAPI.Configurations.Services
             configuration.GetSection("Firebase").Bind(firebaseConfigs);
             var credential = GoogleCredential.FromJson(JsonConvert.SerializeObject(firebaseConfigs));
 
-            FirebaseApp.Create(new AppOptions()  
+            try
             {
-                Credential = credential  
-            });  
+                FirebaseApp.Create(new AppOptions()
+                {
+                    Credential = credential
+                });
+            }
+            catch (System.ArgumentException)
+            {
+                Console.WriteLine("Firebase app already configured");
+            }
         }
     }
 }
