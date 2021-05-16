@@ -1,3 +1,4 @@
+using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,8 +12,15 @@ namespace ServerSightAPI.Configurations.Services
         {
             services.AddDbContext<DatabaseContext>(options =>
             {
-                var postgreSqlConnection = new NpgsqlConnection(configuration.GetConnectionString("sqlConnection"));
-                options.UseNpgsql(postgreSqlConnection);
+                try
+                {
+                    var postgreSqlConnection = new NpgsqlConnection(configuration.GetConnectionString("sqlConnection"));
+                    options.UseNpgsql(postgreSqlConnection);
+                }
+                catch (Exception exception)
+                {
+                    Console.WriteLine("Could not connect to postgres database! Please check your configuration");
+                }
             });
         }
     }
