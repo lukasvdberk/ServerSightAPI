@@ -1,4 +1,4 @@
-name: .NET API Tets
+name: .NET API Tests
 
 on: [push, pull_request]
 
@@ -16,10 +16,12 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Copy config
-      run: echo $DEV_ENV_FILE >> ServerSightAPI/appsettings.json
+      run: echo $CONFIG_CONTENT >> ServerSightAPI/appsettings.json
       shell: bash
       env:
         CONFIG_CONTENT : ${{secrets.ASP_API_CONFIG}}
+    - name: Create required directories
+      run: mkdir ServerSightAPI/Resources/
     - name: Build
       run: dotnet build --no-restore
     - name: Test
