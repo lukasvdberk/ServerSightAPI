@@ -31,6 +31,29 @@ namespace ServerSightAPI.Tests.Integration.Integration.User
 
             authResponse.Token.Should().NotBeEmpty();
         }
+        
+        [Fact]
+        public async Task LoginExistingUserWrongCredentials()
+        {
+            var registrationResponse = await TestClient.PostAsJsonAsync("/api/users/register", new UserDTO()
+            {
+                Email = "testtest@integration.com",
+                Password = "knMNU8X7@17f80!"
+            });
+
+            registrationResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+            
+            var response = await TestClient.PostAsJsonAsync("/api/users/login", new UserDTO()
+            {
+                Email = "testtest@integration.com",
+                Password = "789342789234789f"
+            });
+
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            var authResponse = await response.Content.ReadAsAsync<AuthResponse>();
+
+            authResponse.Token.Should().NotBeEmpty();
+        }
 
         [Fact]
         public async Task RegisterUser()
@@ -41,8 +64,39 @@ namespace ServerSightAPI.Tests.Integration.Integration.User
                 Password = "knMNU8X7@17f80!"
             });
 
-            var authResponse = await response.Content.ReadAsStringAsync();
             response.StatusCode.Should().Be(HttpStatusCode.OK);
+        }
+        
+        [Fact]
+        public async Task RegisterUserWithNoWrongPasswordRequirements()
+        {
+            var response = await TestClient.PostAsJsonAsync("/api/users/register", new UserDTO()
+            {
+                Email = "test1231231231231@integration.com",
+                Password = "Password"
+            });
+
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+        
+        [Fact]
+        public async Task RegisterUserWithAlreadyExistingUser()
+        {
+            var succesFullUserRegristration = await TestClient.PostAsJsonAsync("/api/users/register", new UserDTO()
+            {
+                Email = "test1@integration.com",
+                Password = "knMNU8X7@17f80!"
+            });
+
+            succesFullUserRegristration.StatusCode.Should().Be(HttpStatusCode.OK);
+            
+            var repeatedUserRegristration = await TestClient.PostAsJsonAsync("/api/users/register", new UserDTO()
+            {
+                Email = "test1@integration.com",
+                Password = "knMNU8X7@17f80!"
+            });
+
+            repeatedUserRegristration.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
     }
 }
