@@ -13,6 +13,8 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 5.0.x
+    - name: Restore dependencies
+      run: dotnet restore
     - name: Copy config
       run: echo $DEV_ENV_FILE >> ServerSightAPI/appsettings.json
       shell: bash
