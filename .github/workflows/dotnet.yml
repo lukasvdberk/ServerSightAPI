@@ -14,7 +14,10 @@ jobs:
       with:
         dotnet-version: 5.0.x
     - name: Copy config
-      run: echo ${{ secrets.ASP_API_CONFIG }} > ServerSightAPI/appsettings.json
+      run: echo $DEV_ENV_FILE >> ServerSightAPI/appsettings.json
+      shell: bash
+      env:
+        CONFIG_CONTENT : ${{secrets.ASP_API_CONFIG}}
     - name: Build
       run: dotnet build --no-restore
     - name: Test
