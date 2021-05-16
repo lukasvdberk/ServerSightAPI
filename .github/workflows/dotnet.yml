@@ -20,6 +20,8 @@ jobs:
       shell: bash
       env:
         CONFIG_CONTENT : ${{secrets.ASP_API_CONFIG}}
+    - name: Create required directories
+      run: mkdir ServerSightAPI/Resources/
     - name: Build
       run: dotnet build --no-restore
     - name: Test
