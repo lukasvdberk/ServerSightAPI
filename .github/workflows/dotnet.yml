@@ -19,8 +19,6 @@ jobs:
       run: | 
         echo ${{secrets.ASP_API_CONFIG}} >> ServerSightAPI/appsettings.json
         echo ${{secrets.ASP_API_CONFIG}} >> ServerSightAPI/appsettings.Development.json
-        echo ${{secrets.ASP_API_CONFIG}} >> ServerSightAPI/ServerSightAPI/appsettings.json
-        echo ${{secrets.ASP_API_CONFIG}} >> ServerSightAPI/ServerSightAPI/appsettings.Development.json
       shell: bash 
     - name: Create required directories
       run: mkdir ServerSightAPI/Resources/
