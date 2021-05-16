@@ -14,8 +14,15 @@ namespace ServerSightAPI.Configurations.Services
             {
                 try
                 {
-                    var postgreSqlConnection = new NpgsqlConnection(configuration.GetConnectionString("sqlConnection"));
-                    options.UseNpgsql(postgreSqlConnection);
+                    var postgreSqlConnection = configuration.GetConnectionString("sqlConnection");
+                    if (!string.IsNullOrEmpty(postgreSqlConnection))
+                    {
+                        options.UseNpgsql(new NpgsqlConnection(postgreSqlConnection));
+                    }
+                    else
+                    {
+                        Console.WriteLine("Could not connect to postgres database! Please check your configuration");
+                    }
                 }
                 catch (Exception exception)
                 {

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using ServerSightAPI.Configurations;
 using ServerSightAPI.DTO.User;
 using ServerSightAPI.Tests.Integration.Integration.User;
@@ -30,12 +31,12 @@ namespace ServerSightAPI.Tests.Integration.Integration
                     builder.ConfigureServices(services =>
                     {
                         var descriptor = services.SingleOrDefault(
-                            d => d.ServiceType ==
-                                 typeof(DbContextOptions<DatabaseContext>));
+                            d => d.ServiceType == typeof(DbContextOptions<DatabaseContext>));
                         if (descriptor != null)
                         {
                             services.Remove(descriptor);
                         }
+                        
                         services.AddDbContext<DatabaseContext>(options =>
                         {
                             options.UseInMemoryDatabase("InMemoryDbForIntegrationTesting");
@@ -45,7 +46,7 @@ namespace ServerSightAPI.Tests.Integration.Integration
                         using var scope = sp.CreateScope();
                         var scopedServices = scope.ServiceProvider;
                         var db = scopedServices.GetRequiredService<DatabaseContext>();
-
+                        
                         db.Database.EnsureCreated();
                     });
                 });
