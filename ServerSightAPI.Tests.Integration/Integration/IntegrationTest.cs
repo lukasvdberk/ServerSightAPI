@@ -41,13 +41,6 @@ namespace ServerSightAPI.Tests.Integration.Integration
                     
                     builder.ConfigureServices(services =>
                     {
-                        var descriptor = services.SingleOrDefault(
-                            d => d.ServiceType == typeof(DbContextOptions<DatabaseContext>));
-                        if (descriptor != null)
-                        {
-                            services.Remove(descriptor);
-                        }
-                        
                         services.AddDbContext<DatabaseContext>(options =>
                         {
                             options.UseInMemoryDatabase("InMemoryDbForIntegrationTesting");
