@@ -13,19 +13,19 @@ namespace ServerSightAPI.Configurations.Services
     {
         public static void ConfigureFirebase(this IServiceCollection services, IConfiguration configuration)
         {
-            Dictionary<string, string> firebaseConfigs = new Dictionary<string, string>();
-            
-            configuration.GetSection("Firebase").Bind(firebaseConfigs);
-            var credential = GoogleCredential.FromJson(JsonConvert.SerializeObject(firebaseConfigs));
-
             try
             {
+                Dictionary<string, string> firebaseConfigs = new Dictionary<string, string>();
+            
+                configuration.GetSection("Firebase").Bind(firebaseConfigs);
+                var credential = GoogleCredential.FromJson(JsonConvert.SerializeObject(firebaseConfigs));
+
                 FirebaseApp.Create(new AppOptions()
                 {
                     Credential = credential
                 });
             }
-            catch (System.ArgumentException)
+            catch (Exception exception)
             {
                 Console.WriteLine("Firebase app already configured");
             }

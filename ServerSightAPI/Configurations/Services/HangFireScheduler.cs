@@ -1,3 +1,4 @@
+using System;
 using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Builder;
@@ -11,9 +12,15 @@ namespace ServerSightAPI.Configurations.Services
     {
         public static void ConfigureHangFire(this IServiceCollection services, IConfiguration configuration)
         {
-            // hangfire is for background tasks
-            services.AddHangfire(config =>
-                config.UsePostgreSqlStorage(configuration.GetConnectionString("hangFirePostgreConnection")));
+            try
+            {
+                var postgresConnection = configuration.GetConnectionString("hangFirePostgreConnection");
+                services.AddHangfire(config => config.UsePostgreSqlStorage(postgresConnection));   
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine("Failed to setup database for hangfire. Check your configuration!");
+            }
         }
     }
 }

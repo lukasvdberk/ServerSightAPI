@@ -1,3 +1,4 @@
+using System;
 using System.Net;
 using Hangfire;
 using Hangfire.Dashboard;
@@ -101,12 +102,20 @@ namespace ServerSightAPI
 
             app.UseAuthentication();
             app.UseAuthorization();
-            
-            app.UseHangfireServer();
-            app.UseHangfireDashboard("/hangfire-jobs", new DashboardOptions
+
+
+            try
             {
-                IsReadOnlyFunc = (DashboardContext context) => true
-            });
+                app.UseHangfireServer();
+                app.UseHangfireDashboard("/hangfire-jobs", new DashboardOptions
+                {
+                    IsReadOnlyFunc = (DashboardContext context) => true
+                });
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine("Failed to start hangfire service");
+            }
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
