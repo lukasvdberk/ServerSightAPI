@@ -1,0 +1,19 @@
+version: "3"
+services:
+  integration-tests:
+    build:
+      context: ./
+      dockerfile: ServerSightAPI.Tests.Integration/Dockerfile
+
+    depends_on:
+      - integration-tests-database
+    networks:
+      - base
+  integration-tests-database:
+    build: database
+    env_file:
+      - ServerSightAPI.Tests.Integration/.env
+    networks:
+      - base
+networks:
+  base:

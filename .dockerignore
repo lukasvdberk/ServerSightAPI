@@ -1,0 +1,6 @@
+bin/
+obj/
+ServerSightAPI/bin/
+ServerSightAPI/bin/
+ServerSightAPI.Tests.Integration/obj/
+ServerSightAPI.Tests.Integration/bin/
