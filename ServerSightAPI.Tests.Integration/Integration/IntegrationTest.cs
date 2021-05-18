@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using ServerSightAPI.Configurations;
@@ -25,9 +27,18 @@ namespace ServerSightAPI.Tests.Integration.Integration
         
         public IntegrationTest()
         {
+            var projectDir = Directory.GetCurrentDirectory();
+            var configPath = Path.Combine(projectDir, "appsettings.json");
+            
             var appFactory = new WebApplicationFactory<Startup>()
                 .WithWebHostBuilder(builder =>
                 {
+
+                    builder.ConfigureAppConfiguration((context,conf) =>
+                    {
+                        conf.AddJsonFile(configPath);
+                    });
+                    
                     builder.ConfigureServices(services =>
                     {
                         var descriptor = services.SingleOrDefault(
@@ -68,8 +79,6 @@ namespace ServerSightAPI.Tests.Integration.Integration
                 Password = "knMNU8X7@1780!"
             };
 
-            // await DeletePreviousUser(userDto);
-
             var registerResponse = await TestClient.PostAsJsonAsync("/api/users/register", userDto);
 
             if (!registerResponse.IsSuccessStatusCode)
@@ -78,7 +87,6 @@ namespace ServerSightAPI.Tests.Integration.Integration
                 var registrationFailed = registerResponse.StatusCode == HttpStatusCode.InternalServerError;
                 if (registrationFailed)
                 {
-                    // TODO check exact error not internal server error
                     throw new Exception("Failed to register user");   
                 }
             }
